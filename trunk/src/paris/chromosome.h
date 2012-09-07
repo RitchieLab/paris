@@ -17,8 +17,9 @@
 #include "gene.h"
 #include <assert.h>
 #include <map>
-#include <soci.h>
-#include <soci-sqlite3.h>
+#include "knowledgedatabase.h"
+// #include <soci.h>
+// #include <soci-sqlite3.h>
 
 namespace Paris {
 
@@ -52,12 +53,14 @@ public:
 	/**
 	 * @brief Loads all features associated with this chromosome
 	 */
-	uint LoadFeatures(soci::session& sociDB, const char *popID, uint &featureID);
+// 	uint LoadFeatures(soci::session& sociDB, const char *popID, uint &featureID);
+	uint LoadFeatures(KnowledgeDatabase& knowDB, const char *popID, uint &featureID);
 
 	/**
 	 * @brief Load genes from the database and store them in genes
 	 */
-	uint LoadGenes(soci::session& sociDB, uint popID, uint geneExpansion, std::map<uint, std::string>& aliasLookup);
+// 	uint LoadGenes(soci::session& sociDB, uint popID, uint geneExpansion, std::map<uint, std::string>& aliasLookup);
+	uint LoadGenes(KnowledgeDatabase& knowDB, uint popID, uint geneExpansion, std::map<uint, std::string>& aliasLookup);
 
 	/**
 	 * @brief Merge Features into the genes.

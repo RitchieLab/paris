@@ -20,8 +20,12 @@ Feature::~Feature() { }
 bool Feature::AddValue(uint snpIndex, const char *chrom, uint position, float pvalue) {
 	if (pvalue > 0 || !IgnorePValueOfZero) {
 		if (chrom == _chromosome && position >= _begin && position <= _end) {
-			if (ParisResults::resultsDB)
-				ParisResults::db.sociDB<<"INSERT INTO feature_snps VALUES (:featureID, :rs, :pos, :pvalue)", use(id), use(snpIndex), use(position), use((double)pvalue);
+			if (ParisResults::resultsDB){
+// 				ParisResults::db.sociDB<<"INSERT INTO feature_snps VALUES (:featureID, :rs, :pos, :pvalue)", use(id), use(snpIndex), use(position), use((double)pvalue);
+				stringstream ss;
+				ss << "INSERT INTO feature_snps VALUES (" << id << "," << snpIndex << "," << position << "," << pvalue << ")";
+				ParisResults::db.query(ss.str());
+			}
 			
 			//assert(pscores.find(position) == pscores.end());
 			pscores[position] = pvalue;

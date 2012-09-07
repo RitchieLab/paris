@@ -61,6 +61,7 @@ void AppConfiguration::Init() {
 	InitKey("REFINEMENT_THRESHOLD_MAX", "0.07",		"The upper bound for borderline pvalues (set this to equal\n# REFINEMENT_THRESHOLD_MIN to not perform refinement)");
 	InitKey("REFINEMENT_REP_COUNT",		"1000",		"The number of repeteated ptests performed when a pvalue is determined to be\n# borderline");
 	InitKey("SHOW_ALL_ASSOCIATED_PATHWAYS", "OFF",		"When writing pathway investigation reports, do we show all pathways or only\n# the signficant ones?");
+	InitKey("USER_PATHWAY_FILE",	"",			"User defined group file");		
 }
 
 

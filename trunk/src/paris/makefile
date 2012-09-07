@@ -13,6 +13,10 @@ HDRS=analyzer.h\
 	main.h\
 	pathway.h\
 	parisapp.h\
+	database.h\
+	knowledgedatabase.h\
+	resultsdatabase.h\
+	userknowledgebase.h\
 	timestamp.l
 
 #ADLDEPS=
@@ -29,7 +33,11 @@ SRCS=analyzer.cpp\
 	knowledgebase.cpp\
 	main.cpp\
 	pathway.cpp\
-	parisapp.cpp
+	parisapp.cpp\
+	database.cpp\
+	knowledgedatabase.cpp\
+	userknowledgebase.cpp\
+	resultsdatabase.cpp
 
 #DEFINE THE ROOTPATH - This is the top level where there will be a make, dist, and others
 ROOTPATH=../..

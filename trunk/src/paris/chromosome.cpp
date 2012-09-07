@@ -12,9 +12,9 @@
 #include "parislogs.h"
 #include "utility/strings.h"
 #include <math.h>
+#include "magicdb.h"
 
 using namespace std;
-using namespace soci;
 
 namespace Paris {
 
@@ -101,31 +101,40 @@ void Chromosome::AddGene(const char *ensID, uint id, uint start, uint end, map<u
 
 	if (aliasLookup.find(id) != aliasLookup.end()) 
 		newGene->SetAlias(aliasLookup[id].c_str());
-	if (ParisResults::resultsDB)
-		ParisResults::db.sociDB<<"INSERT INTO genes VALUES (:geneID, :ensID, :chrID, :start, :end)", use(id), use(std::string(ensID)), use(chrID), use(start), use(end);
+	if (ParisResults::resultsDB){
+// 		ParisResults::db.sociDB<<"INSERT INTO genes VALUES (:geneID, :ensID, :chrID, :start, :end)", use(id), use(std::string(ensID)), use(chrID), use(start), use(end);
+		stringstream ss;
+		ss << "INSERT INTO genes VALUES (" << id << "," << ensID << "," << chrID << "," << start << "," << end << ")";
+		ParisResults::db.query(ss.str());
+	}	
 
 	genes[id] = newGene;
 }
-uint Chromosome::LoadGenes(soci::session& sociDB, uint popID, uint geneExpansion, map<uint, string>& aliasLookup) {
-	rowset<row> rs = (sociDB.prepare << "SELECT gene_id, ensembl_id, chrom, description, start, end FROM regions NATURAL JOIN region_bounds WHERE chrom=:id AND population_id=:popID GROUP BY regions.gene_id", use(chrID), use(popID));
+uint Chromosome::LoadGenes(KnowledgeDatabase& knowDB, uint popID, uint geneExpansion, map<uint, string>& aliasLookup) {
+// 	rowset<row> rs = (sociDB.prepare << "SELECT gene_id, ensembl_id, chrom, description, start, end FROM regions NATURAL JOIN region_bounds WHERE chrom=:id AND population_id=:popID GROUP BY regions.gene_id", use(chrID), use(popID));
 	uint count = 0;
-	for (rowset<row>::const_iterator itr = rs.begin(); itr != rs.end(); ++itr) {
-		row const& row = *itr;
-		uint geneID = row.get<int>(0);
-		string ensemblID  = row.get<string>(1);
-		string chrom		= row.get<string>(2);
-		//string desc			= row.get<string>(3);
-		uint start			= row.get<int>(4);
-
+	
+	vector<DBGene>genes;
+	knowDB.get_genes(genes, chrID, popID);
+	
+// 	for (rowset<row>::const_iterator itr = rs.begin(); itr != rs.end(); ++itr) {
+	for(vector<DBGene>::iterator gene_iter=genes.begin(); gene_iter != genes.end(); gene_iter++){
+// 		row const& row = *itr;
+// 		uint geneID = row.get<int>(0);
+// 		string ensemblID  = row.get<string>(1);
+// 		string chrom		= row.get<string>(2);
+// 		//string desc			= row.get<string>(3);
+// 		uint start			= row.get<int>(4);
+		
 		//We can't really afford to wrap around into negative space on the uint....very bad
-		if (start > geneExpansion)
-			start-=geneExpansion;
+		if (uint(gene_iter->start) > geneExpansion)
+			gene_iter->start-=geneExpansion;
 		else
-			start = 0;
+			gene_iter->start = 0;
 
 		//I think it's OK to let the gene stretch past the end of the chromosome
-		uint end				= row.get<int>(5)+geneExpansion;
-		AddGene(ensemblID.c_str(), geneID, start, end, aliasLookup);
+// 		uint end				= row.get<int>(5)+geneExpansion;
+		AddGene(gene_iter->ensemblID.c_str(), gene_iter->geneID, gene_iter->start, gene_iter->end, aliasLookup);
 		count++;
 	}
 	return count;
@@ -134,14 +143,19 @@ uint Chromosome::LoadGenes(soci::session& sociDB, uint popID, uint geneExpansion
 void Chromosome::AddFeature(uint geneID, uint start, uint stop) {
 	assert(start<=stop);
 	Feature *feature = new Feature(geneID, chrID.c_str(), start, stop);
-	if (ParisResults::resultsDB)
-		ParisResults::db.sociDB<<"INSERT INTO features VALUES (:featureID, :chrID, :start, :end)", use(feature->id), use(chrID), use(start), use(stop);
+	if (ParisResults::resultsDB){
+// 		ParisResults::db.sociDB<<"INSERT INTO features VALUES (:featureID, :chrID, :start, :end)", use(feature->id), use(chrID), use(start), use(stop);
+		stringstream ss;
+		ss << "INSERT INTO features VALUES (" << feature->id << "," << chrID << "," << start << "," << stop <<")";
+		ParisResults::db.query(ss.str());
+	}
 	featureEnd.insert(std::pair<uint, Feature*>(stop, feature));
 	featureStart.insert(std::pair<uint, Feature*>(start,feature));
 
 	features.push_back(feature);
 }
-uint Chromosome::LoadFeatures(soci::session& sociDB, const char *popID, uint &featureID) {
+// uint Chromosome::LoadFeatures(soci::session& sociDB, const char *popID, uint &featureID) {
+uint Chromosome::LoadFeatures(KnowledgeDatabase& knowDB, const char *popID, uint &featureID) {
 	std::set<uint> availableSNPs;
 	std::map<uint, uint>::iterator itr = snps.begin();
 	std::map<uint, uint>::iterator end = snps.end();
@@ -150,14 +164,18 @@ uint Chromosome::LoadFeatures(soci::session& sociDB, const char *popID, uint &fe
 		availableSNPs.insert(itr->first);
 		itr++;
 	}
-	rowset<row> rs = (sociDB.prepare << "SELECT DISTINCT start, stop FROM ld_blocks WHERE chromosome=:id AND population_id=:popID", use(chrID), use(string(popID)));
+// 	rowset<row> rs = (sociDB.prepare << "SELECT DISTINCT start, stop FROM ld_blocks WHERE chromosome=:id AND population_id=:popID", use(chrID), use(string(popID)));
+	vector<vector<int> > positions;
+	knowDB.get_start_stop(positions, chrID, popID);
 	uint count = 0;
+	vector<vector<int> >::iterator pos_iter;
 
 	uint snpCount = 0;
-	for (rowset<row>::const_iterator itr = rs.begin(); itr != rs.end(); ++itr) {
-		row const& row = *itr;
-		uint start = row.get<int>(0);
-		uint stop  = row.get<int>(1);
+// 	for (rowset<row>::const_iterator itr = rs.begin(); itr != rs.end(); ++itr) {
+	for(pos_iter=positions.begin(); pos_iter != positions.end(); pos_iter++){
+// 		row const& row = *itr;
+		uint start = (*pos_iter)[0];
+		uint stop  = (*pos_iter)[1];
 
 		if (stop < start) {
 			uint t = start;
@@ -209,8 +227,12 @@ void Chromosome::AddValue(uint snpIndex, float pvalue) {
 	std::map<uint, Feature*>::iterator fItr = featureEnd.lower_bound(pos);
 	std::map<uint, Feature*>::iterator fEnd = featureEnd.upper_bound(pos);
 
-	if (ParisResults::resultsDB)
-		ParisResults::db.sociDB<<"INSERT INTO snps VALUES (:chrID, :rsID, :pos)", use(chrID), use(snpIndex), use(pos);
+	if (ParisResults::resultsDB){
+// 		ParisResults::db.sociDB<<"INSERT INTO snps VALUES (:chrID, :rsID, :pos)", use(chrID), use(snpIndex), use(pos);
+		stringstream ss;
+		ss << "INSERT INTO snps VALUES (" << chrID << "," << snpIndex <<"," << pos << ")";
+		ParisResults::db.query(ss.str());
+	}
 	
 	while (fItr != fEnd) {
 		Feature *f = fItr++->second;

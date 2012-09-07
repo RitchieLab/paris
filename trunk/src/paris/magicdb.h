@@ -4,32 +4,28 @@
 
 
 #ifdef USE_MAGIC
-#include <soci.h>
-#include <soci-sqlite3.h>
+// #include <soci.h>
+// #include <soci-sqlite3.h>
 #include <string>
+#include "ResultsDatabase.h"
 
 namespace Paris {
 
-using namespace soci;
+// using namespace soci;
 
 struct ParisResults {
 	void Open(const char *dbFilename) {
 		if (resultsDB) {
 			std::string cnxParam = "dbname="+std::string(dbFilename)+" timeout=10";
-			sociDB.open(soci::sqlite3, cnxParam.c_str());
 		}
 	}
 
 	void InitTable(const char *tablename, const char *query) {
 		if (resultsDB) {
 			std::string sql = std::string("DROP TABLE IF EXISTS ") + std::string(tablename);
-			sociDB<<sql;
-			sociDB<<query;
 		}
 	}
-	soci::session sociDB;
-
-	static ParisResults db;
+	static ResultsDatabase db;
 	static bool resultsDB;
 };
 

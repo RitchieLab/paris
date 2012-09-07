@@ -12,7 +12,7 @@
 #include <vector>
 #include "magicdb.h"
 #include "utility/stat.h"
-using namespace soci;
+// using namespace soci;
 using namespace std;
 
 namespace Paris {
@@ -49,23 +49,28 @@ string KnowledgeBase::GetName() {
 	return name;
 }
 
-uint KnowledgeBase::LoadKnowledge(soci::session& sociDB, std::map<std::string, Chromosome*>& chromosomes, ostream& os) {
+uint KnowledgeBase::LoadKnowledge(KnowledgeDatabase& knowDB, std::map<std::string, Chromosome*>& chromosomes, ostream& os) {
 
-	sociDB.prepare <<"SELECT group_type FROM group_type WHERE group_type_id=:id", use(id), into(name);
-	rowset<row> rs = (sociDB.prepare << "SELECT group_id, group_name, group_desc, gene_id, chrom FROM groups NATURAL JOIN group_associations NATURAL JOIN regions WHERE group_type_id=:typeID ORDER BY chrom, group_id", use(id));
+// 	sociDB.prepare <<"SELECT group_type FROM group_type WHERE group_type_id=:id", use(id), into(name);
+// 	rowset<row> rs = (sociDB.prepare << "SELECT group_id, group_name, group_desc, gene_id, chrom FROM groups NATURAL JOIN group_associations NATURAL JOIN regions WHERE group_type_id=:typeID ORDER BY chrom, group_id", use(id));
+	
+	vector<DBKnowledge> info;
+	knowDB.get_knowledge(info, id);
+	
 	uint count = 0;
 	assert(chromosomes.size() > 0);
 	Chromosome *chrom = chromosomes.begin()->second;
 
 	Purge();
 
-	for (rowset<row>::const_iterator itr = rs.begin(); itr != rs.end(); ++itr) {
-		row const& row = *itr;
-		uint groupID = row.get<int>(0);
-		string name = row.get<string>(1);
-		string desc = row.get<string>(2);
-		uint geneID	= row.get<int>(3);
-		string c = row.get<string>(4);
+// 	for (rowset<row>::const_iterator itr = rs.begin(); itr != rs.end(); ++itr) {
+	for(vector<DBKnowledge>::iterator know_iter=info.begin(); know_iter != info.end(); know_iter++){
+// 		row const& row = *itr;
+		uint groupID = know_iter->groupID;
+		string name =know_iter->name;
+		string desc =know_iter->desc;
+		uint geneID	=know_iter->geneID;
+		string c =know_iter->c;
 		if (chrom->ID() != c)
 			chrom = NULL;
 			if (chromosomes.find(c) != chromosomes.end())
@@ -88,8 +93,12 @@ uint KnowledgeBase::LoadKnowledge(soci::session& sociDB, std::map<std::string, C
 
 					assert(pathwayLookup.find(name) == pathwayLookup.end());
 					pathwayLookup[name] = pathway;
-					if (ParisResults::resultsDB)
-						ParisResults::db.sociDB<<"INSERT INTO pathways VALUES (:pathwayID, :kbID, :name, :desc)", use(groupID), use(id), use(name), use(desc);
+					if (ParisResults::resultsDB){
+// 						ParisResults::db.sociDB<<"INSERT INTO pathways VALUES (:pathwayID, :kbID, :name, :desc)", use(groupID), use(id), use(name), use(desc);
+						stringstream ss;
+						ss << "INSERT INTO pathways VALUES (" << groupID << "," << id << "," << name << "," << desc << ")";
+						ParisResults::db.query(ss.str());
+					}
 				}
 				pathways[groupID]->AddGene(gene);
 				os<<id<<"\t"<<name<<"\t"<<desc<<"\t"<<gene->id<<"\t"<<gene->EnsemblID()<<"\t"<<gene->_chromosome<<"\t"<<gene->_begin<<"\t"<<gene->_end<<"\n";

@@ -17,14 +17,14 @@
 #include "magicdb.h"
 
 using namespace std;
-using namespace soci;
 using namespace Utility;
 
 namespace Paris {
 
-ParisResults ParisResults::db;
+//ParisResults ParisResults::db;
+ResultsDatabase ParisResults::db;
 bool ParisResults::resultsDB = false;
-
+int ParisApp::UserDefinedGroupType=7;
 
 ParisApp::ParisApp() {
 }
@@ -44,16 +44,15 @@ void ParisApp::InitKnowledge(const char *dbFilename) {
 		exit(1);
 	}
 	try {
-		string cnxParam = "dbname="+string(dbFilename)+" timeout=10";
-		sociDB.open(soci::sqlite3, cnxParam.c_str());
-		int dbSnp=0, ensmbl=0, hapmap=0;
-		sociDB << "SELECT version_id, ensembl_version, hapmap_version FROM version" , into(dbSnp), into(ensmbl), into(hapmap);
+		knowDB.open(dbFilename);
+		string sql = "SELECT version_id, ensembl_version, hapmap_version FROM version";
+		vector<vector<string> > results = knowDB.query(sql);
 		cout<<"\n------------------------- Dependency Versions ----------\n";
-		cout<<setw(35)<<right<<"dbSNP: "<<dbSnp<<"\n";
-		cout<<setw(35)<<right<<"Ensembl: "<<ensmbl<<"\n";
-		cout<<setw(35)<<right<<"Hap Map LD: "<<hapmap<<"\n";
+		cout<<setw(35)<<right<<"dbSNP: "<<results[0][0]<<"\n";
+		cout<<setw(35)<<right<<"Ensembl: "<<results[0][1]<<"\n";
+		cout<<setw(35)<<right<<"Hap Map LD: "<<results[0][2]<<"\n";
 
-	} catch (soci::soci_error const &e) {
+	} catch (DBExcept &e) {
 		cerr<<"Problems were encountered trying to open the database, "<<dbFilename<<". Error: "<<e.what()<<"\n";
 	}
 
@@ -351,10 +350,10 @@ void ParisApp::RunAnalysis(uint permutationCount, float datasetSignificance, flo
 
 	//Evaluate each group for statistical value (including the ptests)
 }
-void ParisApp::InitKB(const char* popID, uint geneExpansion, Utility::StringArray& groups) {
+void ParisApp::InitKB(const char* popID, uint geneExpansion, Utility::StringArray& groups, string user_filename) {
 		if (ParisResults::resultsDB) {
 			string resultsDB = reportPrefix + "-results.sqlite";
-			ParisResults::db.Open(resultsDB.c_str());
+			ParisResults::db.open(resultsDB);
 			ParisResults::db.InitTable("knowledgebase",	"CREATE TABLE knowledgebase (kb_type INTEGER, kb_name VARCHAR(40))");
 			ParisResults::db.InitTable("pathways",			"CREATE TABLE pathways (pathway_id INTEGER, kb_type INTEGER, pathway_name VARCHAR, pathway_description VARCHAR)");
 			ParisResults::db.InitTable("genes",				"CREATE TABLE genes (gene_id INTEGER, ensembl_id VARCHAR, chrom VARCHAR, start INTEGER, end INTEGER)");
@@ -373,21 +372,14 @@ void ParisApp::InitKB(const char* popID, uint geneExpansion, Utility::StringArra
 		uint featureID = 0;
 
 		//Load the alias lookup table
-		rowset<row> rs = (sociDB.prepare <<"SELECT DISTINCT alias, gene_id FROM region_alias NATURAL JOIN regions WHERE region_alias_type_id=1300 GROUP BY gene_id");
 		map<uint, string> aliasLookup;
-		for (rowset<row>::const_iterator itr = rs.begin(); itr != rs.end(); ++itr) {
-			row const& row = *itr;
-			string alias = row.get<string>(0);
-			uint geneID = row.get<int>(1);
-			aliasLookup[geneID] = alias;
-		}
 
+		knowDB.load_alias(aliasLookup);
 		while (itr != end) {
 			//First step, is to load the features
-			itr->second->LoadFeatures(sociDB, popID, featureID);
+			itr->second->LoadFeatures(knowDB, popID, featureID);
 			//Next, we want to Load the genes, and then merge the features into the genes
-			itr->second->LoadGenes(sociDB, 0, geneExpansion, aliasLookup);
-			//itr->second->MergeFeaturesIntoGenes();
+			itr->second->LoadGenes(knowDB, 0, geneExpansion, aliasLookup);
 			itr++;
 		}
 
@@ -397,39 +389,33 @@ void ParisApp::InitKB(const char* popID, uint geneExpansion, Utility::StringArra
 		while (gitr != gend) {
 			uint groupType=0;
 			string groupName="";
-	//		try {
 				//Finally, we want to set up the group information and associated genes with the various groupings
-				sociDB<<"SELECT group_type_id, group_type FROM group_type WHERE group_type_id=?", use(atoi(gitr->c_str())), into(groupType), into(groupName);
-				if (ParisResults::resultsDB) 
-					ParisResults::db.sociDB<<"INSERT INTO knowledgebase VALUES (:type, :name)", use(groupType), use(groupName);
-				KnowledgeBase *kb=new KnowledgeBase(groupType, groupName.c_str());
+			KnowledgeBase *kb;
+			if(atoi(gitr->c_str()) != UserDefinedGroupType){
+				knowDB.get_group(gitr->c_str(), groupType, groupName);
+				if (ParisResults::resultsDB){
+					stringstream ss;
+					ss << "INSERT INTO knowledgebase VALUES(" << groupType << "," << groupName << ")";
+					ParisResults::db.query(ss.str());
+				}
+				kb=new KnowledgeBase(groupType, groupName.c_str());
 
 				cerr<<"Loading Knowledgebase "<<groupType<<" "<<groupName<<"\n";
-				kb->LoadKnowledge(sociDB, chromosomes, FileLogs::logger.kbReport);
+				}
+				else{
+					groupType=UserDefinedGroupType;
+                	UserKnowledgeBase *ub = new UserKnowledgeBase(groupType, "User-defined");
+                    ub->ParseUserFile(user_filename);
+                	kb=ub; 
+				}
+				kb->LoadKnowledge(knowDB, chromosomes, FileLogs::logger.kbReport);
 				knowledge[groupType] = kb;
-/*			} catch (soci_error const &e) {
-				cerr<<"Unable to Load group data from database. Error: "<<e.what()<<"\n";
-				exit(1);
-			}
-*/			gitr++;
 		}
 	
 }
 
 void ParisApp::ListGroupIDs() {
-	rowset<row> rs = (sociDB.prepare <<"SELECT DISTINCT group_type_id, group_type, download_date FROM group_type");
-	cerr<<"\n"<<setw(10)<<right<<"KB ID"<<setw(30)<<right<<"Name"<<setw(30)<<right<<"Date "<<"\n";
-	for (rowset<row>::const_iterator itr = rs.begin(); itr != rs.end(); ++itr) {
-		row const& row = *itr;
-		uint groupID = row.get<int>(0);
-		string name = row.get<string>(1);
-		std::tm downloaddate = row.get<std::tm>(2);
-		std::time_t time = std::mktime(&downloaddate);
-
-		cerr<<setw(10)<<right<<groupID<<setw(30)<<right<<name<<setw(30)<<right<<std::ctime(&time);
-
-	}
-
+	knowDB.list_group_ids(cerr);
 }
 
 uint ParisApp::InitSNPs(std::multimap<string, uint>& allSNPs, const char *fn) {
@@ -466,8 +452,6 @@ uint ParisApp::InitSNPs(std::multimap<string, uint>& allSNPs, const char *fn) {
 
 			Chromosome *newChrom = new Chromosome(label);
 
-	//		offset+= maxPosition;
-	//		posLookup[offset] = newChrom;
 			if (file.good()) {
 				cerr<<".";cerr.flush();
 				for (int i=0; i<snpCount; i++) {

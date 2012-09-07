@@ -15,20 +15,20 @@
 #include <map>
 #include <string>
 #include "genomicregion.h"
-#include <soci.h>
+// #include <soci.h>
 
 
-namespace soci {
-namespace details {
-
-template <>
-struct exchange_traits<unsigned int>
-{
-        typedef basic_type_tag type_family;
-        enum { x_type = x_integer };
-};
-}
-}
+// namespace soci {
+// namespace details {
+// 
+// template <>
+// struct exchange_traits<unsigned int>
+// {
+//         typedef basic_type_tag type_family;
+//         enum { x_type = x_integer };
+// };
+// }
+// }
 
 
 namespace Paris {

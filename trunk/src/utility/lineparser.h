@@ -269,7 +269,6 @@ inline
 string FileToMap::GetLine(const char *key) {
 	string value="";
 	vector<string> lines;
-
 	if (GetLines(key, lines) && lines.size()>0)
 		value=lines[0];
 	return value;
@@ -339,7 +338,6 @@ bool FileToMap::ParseLine(const char *line, uint val /* = 0*/) {
 	stringstream source(line);
 
 	bool valid = strlen(line) > 0 && line[0] != '\n';
-
 	if (valid) {
 		string key, word;
 

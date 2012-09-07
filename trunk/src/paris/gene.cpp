@@ -45,8 +45,12 @@ void Gene::AddFeature(Feature* feature) {
 	// |--{--------}----|
 	if (feature->_begin <= _end && feature->_end >= _begin) {
 		assert(feature->FeatureSize() != (uint)-1);
-		if (ParisResults::resultsDB)
-			ParisResults::db.sociDB<<"INSERT INTO gene_to_feature VALUES (:geneID, :featureID)", use(id), use(feature->id);
+		if (ParisResults::resultsDB){
+// 			ParisResults::db.sociDB<<"INSERT INTO gene_to_feature VALUES (:geneID, :featureID)", use(id), use(feature->id);
+			stringstream ss;
+			ss << "INSERT INTO gene_to_feature VALUES (" << id << "," << feature->id << ")";
+			ParisResults::db.query(ss.str());
+		}
 		features.insert(feature);
 	}
 }
@@ -250,8 +254,12 @@ void Gene::Summarize(std::ostream& os, bool html) {
 }
 void Gene::AddGroup(uint groupType, uint groupID) {
 	groups.insert(pair<uint, uint>(groupType, groupID));
-	if (ParisResults::resultsDB)
-		ParisResults::db.sociDB<<"INSERT INTO pathway_to_gene VALUES (:groupID, :geneID)", use(groupID), use(id);
+	if (ParisResults::resultsDB){
+// 		ParisResults::db.sociDB<<"INSERT INTO pathway_to_gene VALUES (:groupID, :geneID)", use(groupID), use(id);
+		stringstream ss;
+		ss << "INSERT INTO pathway_to_gene VALUES (" << groupID << "," << id << ")";
+		ParisResults::db.query(ss.str());
+	}
 
 }
 

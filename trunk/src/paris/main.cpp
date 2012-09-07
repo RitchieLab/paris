@@ -203,12 +203,14 @@ void Main::RunCommands() {
 	uint geneExpansion					= cfg.GetInteger("GENE_BOUNDARY_EXTENSION");
 	StringArray knowledgeBases;
 	cfg.GetLines("INCLUDE_KNOWLEDGE", knowledgeBases);
-	parisApp.InitKB(ldPopulation.c_str(), geneExpansion, knowledgeBases);
+	string user_filename = cfg.GetLine("USER_PATHWAY_FILE");
+	parisApp.InitKB(ldPopulation.c_str(), geneExpansion, knowledgeBases, user_filename);
 
 	uint binSize							= cfg.GetInteger("BIN_SIZE");
 	uint pCount								= cfg.GetInteger("P_COUNT");
 	float pathSig							= cfg.GetDouble("PATHWAY_SIG_THRESH");
 	float dataSig							= cfg.GetDouble("RESULTS_SIG_THRESH");
+	
 	parisApp.InitData(data, binSize);
 	if (action == ParisAction::InvestigatePathways) {
 		StringArray groups				= LoadGroupFile(cfg.GetString("PATHWAY_INVESTIGATION_FILENAME").c_str());
@@ -229,9 +231,9 @@ void Main::RunCommands() {
 
 void Main::LoadDataPoints(vector<ParisApp::DataPoint>& data, std::multimap<string, uint >& snps) {
 	string filename	= cfg.GetLine("DATA_SOURCE");		///< chr, rs, pos
-	uint chrColumn		= cfg.GetInteger("COL_CHROMOSOME");	///< 0
-	uint rsColumn		= cfg.GetInteger("COL_RSID");			///< 1
-	uint pvalColumn	= cfg.GetInteger("COL_PVALUE");		///< 3
+	uint chrColumn		= cfg.GetInteger("COL_CHROMOSOME")-1;	///< 0
+	uint rsColumn		= cfg.GetInteger("COL_RSID")-1;			///< 1
+	uint pvalColumn	= cfg.GetInteger("COL_PVALUE")-1;		///< 3
 
 	char line[4096];
 	ifstream file(filename.c_str());
@@ -267,7 +269,6 @@ void Main::LoadDataPoints(vector<ParisApp::DataPoint>& data, std::multimap<strin
 
 	parisApp.InitSNPs(snps, cfg.GetLine("VARIATION_FILENAME").c_str());
 	cout<<" ("<<snps.size()<<" matches in our database )\n";
-
 }
 
 

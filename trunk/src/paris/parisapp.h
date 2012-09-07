@@ -13,6 +13,8 @@
 #include <map>
 #include <vector>
 #include "knowledgebase.h"
+#include "knowledgedatabase.h"
+#include "userknowledgebase.h"
 namespace Paris {
 
 
@@ -42,7 +44,7 @@ public:
 	 * @param dbFilename This is the source database which contains group and variation IDs.
 	 */
 	void InitKnowledge(const char *dbFilename);
-	void InitKB(const char* popID, uint geneExpansion, Utility::StringArray& groups);
+	void InitKB(const char* popID, uint geneExpansion, Utility::StringArray& groups, std::string user_filename);
 	void InitData(std::vector<ParisApp::DataPoint>& data, uint binSize);
 	void SetReportPrefix(const char *prefix);
 	uint InitSNPs(std::multimap<std::string, uint>& allSNPs, const char *fn);
@@ -60,13 +62,13 @@ public:
 	void ReportName(const char *name);
 	std::string ReportName();
 private:
-	soci::session sociDB;									///< The database
+	KnowledgeDatabase knowDB;											///< The database
 	std::string reportPrefix;								///< Report Prefix
 	std::string reportName;									///< Optional name for the report to be used inside certain reports
 	std::map<std::string, Chromosome*> chromosomes;	///< The chromosomes will manage the features and genes
 	std::map<uint, KnowledgeBase*> knowledge;			///< id -> KB*
 	std::map<uint, std::vector<Feature*> > bins;						///< binID -> Feature*
-
+	static int UserDefinedGroupType;
 };
 }
 #endif	/* _PARISAPP_H */
