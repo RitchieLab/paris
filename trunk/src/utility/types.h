@@ -18,6 +18,8 @@
 #include <stdint.h>
 #include <vector>
 #include <string>
+#include <cstring>
+#include <cstdio>
 
 #include <boost/dynamic_bitset.hpp>
 #include <vector>
