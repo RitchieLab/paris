@@ -1,51 +1,442 @@
 analyzer.o: analyzer.cpp analyzer.h ../utility/strings.h \
-  ../utility/types.h gene.h genomicregion.h ../utility/types.h feature.h \
-  ../utility/random.h ../random/randomc.h
+  ../utility/types.h /opt/local/include/boost/dynamic_bitset.hpp \
+  /opt/local/include/boost/dynamic_bitset/dynamic_bitset.hpp \
+  /opt/local/include/boost/dynamic_bitset/config.hpp \
+  /opt/local/include/boost/config.hpp \
+  /opt/local/include/boost/config/user.hpp \
+  /opt/local/include/boost/config/select_compiler_config.hpp \
+  /opt/local/include/boost/config/compiler/gcc.hpp \
+  /opt/local/include/boost/config/select_stdlib_config.hpp \
+  /opt/local/include/boost/config/no_tr1/utility.hpp \
+  /opt/local/include/boost/config/stdlib/libstdcpp3.hpp \
+  /opt/local/include/boost/config/select_platform_config.hpp \
+  /opt/local/include/boost/config/platform/macos.hpp \
+  /opt/local/include/boost/config/posix_features.hpp \
+  /opt/local/include/boost/config/suffix.hpp \
+  /opt/local/include/boost/detail/workaround.hpp \
+  /opt/local/include/boost/config.hpp \
+  /opt/local/include/boost/dynamic_bitset_fwd.hpp \
+  /opt/local/include/boost/detail/dynamic_bitset.hpp \
+  /opt/local/include/boost/detail/workaround.hpp \
+  /opt/local/include/boost/detail/iterator.hpp \
+  /opt/local/include/boost/static_assert.hpp \
+  /opt/local/include/boost/detail/workaround.hpp \
+  /opt/local/include/boost/limits.hpp \
+  /opt/local/include/boost/pending/lowest_bit.hpp \
+  /opt/local/include/boost/pending/integer_log2.hpp \
+  /opt/local/include/boost/limits.hpp gene.h genomicregion.h \
+  ../utility/types.h feature.h ../utility/random.h ../random/randomc.h
 appconfiguration.o: appconfiguration.cpp appconfiguration.h \
-  ../utility/lineparser.h ../utility/types.h ../utility/strings.h \
+  ../utility/lineparser.h ../utility/types.h \
+  /opt/local/include/boost/dynamic_bitset.hpp \
+  /opt/local/include/boost/dynamic_bitset/dynamic_bitset.hpp \
+  /opt/local/include/boost/dynamic_bitset/config.hpp \
+  /opt/local/include/boost/config.hpp \
+  /opt/local/include/boost/config/user.hpp \
+  /opt/local/include/boost/config/select_compiler_config.hpp \
+  /opt/local/include/boost/config/compiler/gcc.hpp \
+  /opt/local/include/boost/config/select_stdlib_config.hpp \
+  /opt/local/include/boost/config/no_tr1/utility.hpp \
+  /opt/local/include/boost/config/stdlib/libstdcpp3.hpp \
+  /opt/local/include/boost/config/select_platform_config.hpp \
+  /opt/local/include/boost/config/platform/macos.hpp \
+  /opt/local/include/boost/config/posix_features.hpp \
+  /opt/local/include/boost/config/suffix.hpp \
+  /opt/local/include/boost/detail/workaround.hpp \
+  /opt/local/include/boost/config.hpp \
+  /opt/local/include/boost/dynamic_bitset_fwd.hpp \
+  /opt/local/include/boost/detail/dynamic_bitset.hpp \
+  /opt/local/include/boost/detail/workaround.hpp \
+  /opt/local/include/boost/detail/iterator.hpp \
+  /opt/local/include/boost/static_assert.hpp \
+  /opt/local/include/boost/detail/workaround.hpp \
+  /opt/local/include/boost/limits.hpp \
+  /opt/local/include/boost/pending/lowest_bit.hpp \
+  /opt/local/include/boost/pending/integer_log2.hpp \
+  /opt/local/include/boost/limits.hpp ../utility/strings.h \
   genomicregion.h ../utility/types.h pathway.h ../utility/random.h \
   ../random/randomc.h ../utility/strings.h analyzer.h gene.h feature.h \
-  magicdb.h ResultsDatabase.h database.h dbexcept.h parislogs.h bin.h \
-  knowledgebase.h chromosome.h knowledgedatabase.h
+  magicdb.h resultsdatabase.h /opt/local/include/sqlite3.h database.h \
+  dbexcept.h parislogs.h bin.h knowledgebase.h chromosome.h \
+  knowledgedatabase.h
 bin.o: bin.cpp bin.h feature.h genomicregion.h ../utility/types.h \
-  ../utility/random.h ../utility/types.h ../random/randomc.h
+  /opt/local/include/boost/dynamic_bitset.hpp \
+  /opt/local/include/boost/dynamic_bitset/dynamic_bitset.hpp \
+  /opt/local/include/boost/dynamic_bitset/config.hpp \
+  /opt/local/include/boost/config.hpp \
+  /opt/local/include/boost/config/user.hpp \
+  /opt/local/include/boost/config/select_compiler_config.hpp \
+  /opt/local/include/boost/config/compiler/gcc.hpp \
+  /opt/local/include/boost/config/select_stdlib_config.hpp \
+  /opt/local/include/boost/config/no_tr1/utility.hpp \
+  /opt/local/include/boost/config/stdlib/libstdcpp3.hpp \
+  /opt/local/include/boost/config/select_platform_config.hpp \
+  /opt/local/include/boost/config/platform/macos.hpp \
+  /opt/local/include/boost/config/posix_features.hpp \
+  /opt/local/include/boost/config/suffix.hpp \
+  /opt/local/include/boost/detail/workaround.hpp \
+  /opt/local/include/boost/config.hpp \
+  /opt/local/include/boost/dynamic_bitset_fwd.hpp \
+  /opt/local/include/boost/detail/dynamic_bitset.hpp \
+  /opt/local/include/boost/detail/workaround.hpp \
+  /opt/local/include/boost/detail/iterator.hpp \
+  /opt/local/include/boost/static_assert.hpp \
+  /opt/local/include/boost/detail/workaround.hpp \
+  /opt/local/include/boost/limits.hpp \
+  /opt/local/include/boost/pending/lowest_bit.hpp \
+  /opt/local/include/boost/pending/integer_log2.hpp \
+  /opt/local/include/boost/limits.hpp ../utility/random.h \
+  ../utility/types.h ../random/randomc.h
 chromosome.o: chromosome.cpp chromosome.h feature.h genomicregion.h \
-  ../utility/types.h gene.h knowledgedatabase.h database.h dbexcept.h \
-  magicdb.h ResultsDatabase.h parislogs.h ../utility/strings.h \
-  ../utility/types.h
+  ../utility/types.h /opt/local/include/boost/dynamic_bitset.hpp \
+  /opt/local/include/boost/dynamic_bitset/dynamic_bitset.hpp \
+  /opt/local/include/boost/dynamic_bitset/config.hpp \
+  /opt/local/include/boost/config.hpp \
+  /opt/local/include/boost/config/user.hpp \
+  /opt/local/include/boost/config/select_compiler_config.hpp \
+  /opt/local/include/boost/config/compiler/gcc.hpp \
+  /opt/local/include/boost/config/select_stdlib_config.hpp \
+  /opt/local/include/boost/config/no_tr1/utility.hpp \
+  /opt/local/include/boost/config/stdlib/libstdcpp3.hpp \
+  /opt/local/include/boost/config/select_platform_config.hpp \
+  /opt/local/include/boost/config/platform/macos.hpp \
+  /opt/local/include/boost/config/posix_features.hpp \
+  /opt/local/include/boost/config/suffix.hpp \
+  /opt/local/include/boost/detail/workaround.hpp \
+  /opt/local/include/boost/config.hpp \
+  /opt/local/include/boost/dynamic_bitset_fwd.hpp \
+  /opt/local/include/boost/detail/dynamic_bitset.hpp \
+  /opt/local/include/boost/detail/workaround.hpp \
+  /opt/local/include/boost/detail/iterator.hpp \
+  /opt/local/include/boost/static_assert.hpp \
+  /opt/local/include/boost/detail/workaround.hpp \
+  /opt/local/include/boost/limits.hpp \
+  /opt/local/include/boost/pending/lowest_bit.hpp \
+  /opt/local/include/boost/pending/integer_log2.hpp \
+  /opt/local/include/boost/limits.hpp gene.h knowledgedatabase.h \
+  /opt/local/include/sqlite3.h database.h dbexcept.h magicdb.h \
+  resultsdatabase.h parislogs.h ../utility/strings.h ../utility/types.h
 feature.o: feature.cpp feature.h genomicregion.h ../utility/types.h \
-  magicdb.h ResultsDatabase.h database.h dbexcept.h
-gene.o: gene.cpp gene.h genomicregion.h ../utility/types.h feature.h \
-  magicdb.h ResultsDatabase.h database.h dbexcept.h
+  /opt/local/include/boost/dynamic_bitset.hpp \
+  /opt/local/include/boost/dynamic_bitset/dynamic_bitset.hpp \
+  /opt/local/include/boost/dynamic_bitset/config.hpp \
+  /opt/local/include/boost/config.hpp \
+  /opt/local/include/boost/config/user.hpp \
+  /opt/local/include/boost/config/select_compiler_config.hpp \
+  /opt/local/include/boost/config/compiler/gcc.hpp \
+  /opt/local/include/boost/config/select_stdlib_config.hpp \
+  /opt/local/include/boost/config/no_tr1/utility.hpp \
+  /opt/local/include/boost/config/stdlib/libstdcpp3.hpp \
+  /opt/local/include/boost/config/select_platform_config.hpp \
+  /opt/local/include/boost/config/platform/macos.hpp \
+  /opt/local/include/boost/config/posix_features.hpp \
+  /opt/local/include/boost/config/suffix.hpp \
+  /opt/local/include/boost/detail/workaround.hpp \
+  /opt/local/include/boost/config.hpp \
+  /opt/local/include/boost/dynamic_bitset_fwd.hpp \
+  /opt/local/include/boost/detail/dynamic_bitset.hpp \
+  /opt/local/include/boost/detail/workaround.hpp \
+  /opt/local/include/boost/detail/iterator.hpp \
+  /opt/local/include/boost/static_assert.hpp \
+  /opt/local/include/boost/detail/workaround.hpp \
+  /opt/local/include/boost/limits.hpp \
+  /opt/local/include/boost/pending/lowest_bit.hpp \
+  /opt/local/include/boost/pending/integer_log2.hpp \
+  /opt/local/include/boost/limits.hpp magicdb.h resultsdatabase.h \
+  /opt/local/include/sqlite3.h database.h dbexcept.h
+gene.o: gene.cpp gene.h genomicregion.h ../utility/types.h \
+  /opt/local/include/boost/dynamic_bitset.hpp \
+  /opt/local/include/boost/dynamic_bitset/dynamic_bitset.hpp \
+  /opt/local/include/boost/dynamic_bitset/config.hpp \
+  /opt/local/include/boost/config.hpp \
+  /opt/local/include/boost/config/user.hpp \
+  /opt/local/include/boost/config/select_compiler_config.hpp \
+  /opt/local/include/boost/config/compiler/gcc.hpp \
+  /opt/local/include/boost/config/select_stdlib_config.hpp \
+  /opt/local/include/boost/config/no_tr1/utility.hpp \
+  /opt/local/include/boost/config/stdlib/libstdcpp3.hpp \
+  /opt/local/include/boost/config/select_platform_config.hpp \
+  /opt/local/include/boost/config/platform/macos.hpp \
+  /opt/local/include/boost/config/posix_features.hpp \
+  /opt/local/include/boost/config/suffix.hpp \
+  /opt/local/include/boost/detail/workaround.hpp \
+  /opt/local/include/boost/config.hpp \
+  /opt/local/include/boost/dynamic_bitset_fwd.hpp \
+  /opt/local/include/boost/detail/dynamic_bitset.hpp \
+  /opt/local/include/boost/detail/workaround.hpp \
+  /opt/local/include/boost/detail/iterator.hpp \
+  /opt/local/include/boost/static_assert.hpp \
+  /opt/local/include/boost/detail/workaround.hpp \
+  /opt/local/include/boost/limits.hpp \
+  /opt/local/include/boost/pending/lowest_bit.hpp \
+  /opt/local/include/boost/pending/integer_log2.hpp \
+  /opt/local/include/boost/limits.hpp feature.h magicdb.h \
+  resultsdatabase.h /opt/local/include/sqlite3.h database.h dbexcept.h
 genomicregion.o: genomicregion.cpp genomicregion.h ../utility/types.h \
-  chromosome.h feature.h gene.h knowledgedatabase.h database.h dbexcept.h
+  /opt/local/include/boost/dynamic_bitset.hpp \
+  /opt/local/include/boost/dynamic_bitset/dynamic_bitset.hpp \
+  /opt/local/include/boost/dynamic_bitset/config.hpp \
+  /opt/local/include/boost/config.hpp \
+  /opt/local/include/boost/config/user.hpp \
+  /opt/local/include/boost/config/select_compiler_config.hpp \
+  /opt/local/include/boost/config/compiler/gcc.hpp \
+  /opt/local/include/boost/config/select_stdlib_config.hpp \
+  /opt/local/include/boost/config/no_tr1/utility.hpp \
+  /opt/local/include/boost/config/stdlib/libstdcpp3.hpp \
+  /opt/local/include/boost/config/select_platform_config.hpp \
+  /opt/local/include/boost/config/platform/macos.hpp \
+  /opt/local/include/boost/config/posix_features.hpp \
+  /opt/local/include/boost/config/suffix.hpp \
+  /opt/local/include/boost/detail/workaround.hpp \
+  /opt/local/include/boost/config.hpp \
+  /opt/local/include/boost/dynamic_bitset_fwd.hpp \
+  /opt/local/include/boost/detail/dynamic_bitset.hpp \
+  /opt/local/include/boost/detail/workaround.hpp \
+  /opt/local/include/boost/detail/iterator.hpp \
+  /opt/local/include/boost/static_assert.hpp \
+  /opt/local/include/boost/detail/workaround.hpp \
+  /opt/local/include/boost/limits.hpp \
+  /opt/local/include/boost/pending/lowest_bit.hpp \
+  /opt/local/include/boost/pending/integer_log2.hpp \
+  /opt/local/include/boost/limits.hpp chromosome.h feature.h gene.h \
+  knowledgedatabase.h /opt/local/include/sqlite3.h database.h dbexcept.h
 knowledgebase.o: knowledgebase.cpp knowledgebase.h chromosome.h feature.h \
-  genomicregion.h ../utility/types.h gene.h knowledgedatabase.h \
-  database.h dbexcept.h pathway.h ../utility/random.h ../utility/types.h \
-  ../random/randomc.h ../utility/strings.h analyzer.h magicdb.h \
-  ResultsDatabase.h ../utility/stat.h ../utility/random.h
+  genomicregion.h ../utility/types.h \
+  /opt/local/include/boost/dynamic_bitset.hpp \
+  /opt/local/include/boost/dynamic_bitset/dynamic_bitset.hpp \
+  /opt/local/include/boost/dynamic_bitset/config.hpp \
+  /opt/local/include/boost/config.hpp \
+  /opt/local/include/boost/config/user.hpp \
+  /opt/local/include/boost/config/select_compiler_config.hpp \
+  /opt/local/include/boost/config/compiler/gcc.hpp \
+  /opt/local/include/boost/config/select_stdlib_config.hpp \
+  /opt/local/include/boost/config/no_tr1/utility.hpp \
+  /opt/local/include/boost/config/stdlib/libstdcpp3.hpp \
+  /opt/local/include/boost/config/select_platform_config.hpp \
+  /opt/local/include/boost/config/platform/macos.hpp \
+  /opt/local/include/boost/config/posix_features.hpp \
+  /opt/local/include/boost/config/suffix.hpp \
+  /opt/local/include/boost/detail/workaround.hpp \
+  /opt/local/include/boost/config.hpp \
+  /opt/local/include/boost/dynamic_bitset_fwd.hpp \
+  /opt/local/include/boost/detail/dynamic_bitset.hpp \
+  /opt/local/include/boost/detail/workaround.hpp \
+  /opt/local/include/boost/detail/iterator.hpp \
+  /opt/local/include/boost/static_assert.hpp \
+  /opt/local/include/boost/detail/workaround.hpp \
+  /opt/local/include/boost/limits.hpp \
+  /opt/local/include/boost/pending/lowest_bit.hpp \
+  /opt/local/include/boost/pending/integer_log2.hpp \
+  /opt/local/include/boost/limits.hpp gene.h knowledgedatabase.h \
+  /opt/local/include/sqlite3.h database.h dbexcept.h pathway.h \
+  ../utility/random.h ../utility/types.h ../random/randomc.h \
+  ../utility/strings.h analyzer.h magicdb.h resultsdatabase.h \
+  ../utility/stat.h ../utility/random.h
 main.o: main.cpp main.h parisapp.h chromosome.h feature.h genomicregion.h \
-  ../utility/types.h gene.h knowledgedatabase.h database.h dbexcept.h \
-  knowledgebase.h pathway.h ../utility/random.h ../utility/types.h \
-  ../random/randomc.h ../utility/strings.h analyzer.h userknowledgebase.h \
-  appconfiguration.h ../utility/lineparser.h ../utility/strings.h \
-  timestamp.h parislogs.h
+  ../utility/types.h /opt/local/include/boost/dynamic_bitset.hpp \
+  /opt/local/include/boost/dynamic_bitset/dynamic_bitset.hpp \
+  /opt/local/include/boost/dynamic_bitset/config.hpp \
+  /opt/local/include/boost/config.hpp \
+  /opt/local/include/boost/config/user.hpp \
+  /opt/local/include/boost/config/select_compiler_config.hpp \
+  /opt/local/include/boost/config/compiler/gcc.hpp \
+  /opt/local/include/boost/config/select_stdlib_config.hpp \
+  /opt/local/include/boost/config/no_tr1/utility.hpp \
+  /opt/local/include/boost/config/stdlib/libstdcpp3.hpp \
+  /opt/local/include/boost/config/select_platform_config.hpp \
+  /opt/local/include/boost/config/platform/macos.hpp \
+  /opt/local/include/boost/config/posix_features.hpp \
+  /opt/local/include/boost/config/suffix.hpp \
+  /opt/local/include/boost/detail/workaround.hpp \
+  /opt/local/include/boost/config.hpp \
+  /opt/local/include/boost/dynamic_bitset_fwd.hpp \
+  /opt/local/include/boost/detail/dynamic_bitset.hpp \
+  /opt/local/include/boost/detail/workaround.hpp \
+  /opt/local/include/boost/detail/iterator.hpp \
+  /opt/local/include/boost/static_assert.hpp \
+  /opt/local/include/boost/detail/workaround.hpp \
+  /opt/local/include/boost/limits.hpp \
+  /opt/local/include/boost/pending/lowest_bit.hpp \
+  /opt/local/include/boost/pending/integer_log2.hpp \
+  /opt/local/include/boost/limits.hpp gene.h knowledgedatabase.h \
+  /opt/local/include/sqlite3.h database.h dbexcept.h knowledgebase.h \
+  pathway.h ../utility/random.h ../utility/types.h ../random/randomc.h \
+  ../utility/strings.h analyzer.h userknowledgebase.h appconfiguration.h \
+  ../utility/lineparser.h ../utility/strings.h timestamp.h parislogs.h
 pathway.o: pathway.cpp pathway.h ../utility/random.h ../utility/types.h \
-  ../random/randomc.h ../utility/strings.h analyzer.h gene.h \
-  genomicregion.h ../utility/types.h feature.h chromosome.h \
-  knowledgedatabase.h database.h dbexcept.h
+  /opt/local/include/boost/dynamic_bitset.hpp \
+  /opt/local/include/boost/dynamic_bitset/dynamic_bitset.hpp \
+  /opt/local/include/boost/dynamic_bitset/config.hpp \
+  /opt/local/include/boost/config.hpp \
+  /opt/local/include/boost/config/user.hpp \
+  /opt/local/include/boost/config/select_compiler_config.hpp \
+  /opt/local/include/boost/config/compiler/gcc.hpp \
+  /opt/local/include/boost/config/select_stdlib_config.hpp \
+  /opt/local/include/boost/config/no_tr1/utility.hpp \
+  /opt/local/include/boost/config/stdlib/libstdcpp3.hpp \
+  /opt/local/include/boost/config/select_platform_config.hpp \
+  /opt/local/include/boost/config/platform/macos.hpp \
+  /opt/local/include/boost/config/posix_features.hpp \
+  /opt/local/include/boost/config/suffix.hpp \
+  /opt/local/include/boost/detail/workaround.hpp \
+  /opt/local/include/boost/config.hpp \
+  /opt/local/include/boost/dynamic_bitset_fwd.hpp \
+  /opt/local/include/boost/detail/dynamic_bitset.hpp \
+  /opt/local/include/boost/detail/workaround.hpp \
+  /opt/local/include/boost/detail/iterator.hpp \
+  /opt/local/include/boost/static_assert.hpp \
+  /opt/local/include/boost/detail/workaround.hpp \
+  /opt/local/include/boost/limits.hpp \
+  /opt/local/include/boost/pending/lowest_bit.hpp \
+  /opt/local/include/boost/pending/integer_log2.hpp \
+  /opt/local/include/boost/limits.hpp ../random/randomc.h \
+  ../utility/strings.h analyzer.h gene.h genomicregion.h \
+  ../utility/types.h feature.h chromosome.h knowledgedatabase.h \
+  /opt/local/include/sqlite3.h database.h dbexcept.h
 parisapp.o: parisapp.cpp parisapp.h chromosome.h feature.h \
-  genomicregion.h ../utility/types.h gene.h knowledgedatabase.h \
-  database.h dbexcept.h knowledgebase.h pathway.h ../utility/random.h \
-  ../utility/types.h ../random/randomc.h ../utility/strings.h analyzer.h \
-  userknowledgebase.h parislogs.h bin.h magicdb.h ResultsDatabase.h
-database.o: database.cpp database.h dbexcept.h ../utility/types.h
-knowledgedatabase.o: knowledgedatabase.cpp knowledgedatabase.h database.h \
-  dbexcept.h ../utility/types.h
+  genomicregion.h ../utility/types.h \
+  /opt/local/include/boost/dynamic_bitset.hpp \
+  /opt/local/include/boost/dynamic_bitset/dynamic_bitset.hpp \
+  /opt/local/include/boost/dynamic_bitset/config.hpp \
+  /opt/local/include/boost/config.hpp \
+  /opt/local/include/boost/config/user.hpp \
+  /opt/local/include/boost/config/select_compiler_config.hpp \
+  /opt/local/include/boost/config/compiler/gcc.hpp \
+  /opt/local/include/boost/config/select_stdlib_config.hpp \
+  /opt/local/include/boost/config/no_tr1/utility.hpp \
+  /opt/local/include/boost/config/stdlib/libstdcpp3.hpp \
+  /opt/local/include/boost/config/select_platform_config.hpp \
+  /opt/local/include/boost/config/platform/macos.hpp \
+  /opt/local/include/boost/config/posix_features.hpp \
+  /opt/local/include/boost/config/suffix.hpp \
+  /opt/local/include/boost/detail/workaround.hpp \
+  /opt/local/include/boost/config.hpp \
+  /opt/local/include/boost/dynamic_bitset_fwd.hpp \
+  /opt/local/include/boost/detail/dynamic_bitset.hpp \
+  /opt/local/include/boost/detail/workaround.hpp \
+  /opt/local/include/boost/detail/iterator.hpp \
+  /opt/local/include/boost/static_assert.hpp \
+  /opt/local/include/boost/detail/workaround.hpp \
+  /opt/local/include/boost/limits.hpp \
+  /opt/local/include/boost/pending/lowest_bit.hpp \
+  /opt/local/include/boost/pending/integer_log2.hpp \
+  /opt/local/include/boost/limits.hpp gene.h knowledgedatabase.h \
+  /opt/local/include/sqlite3.h database.h dbexcept.h knowledgebase.h \
+  pathway.h ../utility/random.h ../utility/types.h ../random/randomc.h \
+  ../utility/strings.h analyzer.h userknowledgebase.h parislogs.h bin.h \
+  magicdb.h resultsdatabase.h
+database.o: database.cpp database.h /opt/local/include/sqlite3.h \
+  dbexcept.h ../utility/types.h \
+  /opt/local/include/boost/dynamic_bitset.hpp \
+  /opt/local/include/boost/dynamic_bitset/dynamic_bitset.hpp \
+  /opt/local/include/boost/dynamic_bitset/config.hpp \
+  /opt/local/include/boost/config.hpp \
+  /opt/local/include/boost/config/user.hpp \
+  /opt/local/include/boost/config/select_compiler_config.hpp \
+  /opt/local/include/boost/config/compiler/gcc.hpp \
+  /opt/local/include/boost/config/select_stdlib_config.hpp \
+  /opt/local/include/boost/config/no_tr1/utility.hpp \
+  /opt/local/include/boost/config/stdlib/libstdcpp3.hpp \
+  /opt/local/include/boost/config/select_platform_config.hpp \
+  /opt/local/include/boost/config/platform/macos.hpp \
+  /opt/local/include/boost/config/posix_features.hpp \
+  /opt/local/include/boost/config/suffix.hpp \
+  /opt/local/include/boost/detail/workaround.hpp \
+  /opt/local/include/boost/config.hpp \
+  /opt/local/include/boost/dynamic_bitset_fwd.hpp \
+  /opt/local/include/boost/detail/dynamic_bitset.hpp \
+  /opt/local/include/boost/detail/workaround.hpp \
+  /opt/local/include/boost/detail/iterator.hpp \
+  /opt/local/include/boost/static_assert.hpp \
+  /opt/local/include/boost/detail/workaround.hpp \
+  /opt/local/include/boost/limits.hpp \
+  /opt/local/include/boost/pending/lowest_bit.hpp \
+  /opt/local/include/boost/pending/integer_log2.hpp \
+  /opt/local/include/boost/limits.hpp
+knowledgedatabase.o: knowledgedatabase.cpp knowledgedatabase.h \
+  /opt/local/include/sqlite3.h database.h dbexcept.h ../utility/types.h \
+  /opt/local/include/boost/dynamic_bitset.hpp \
+  /opt/local/include/boost/dynamic_bitset/dynamic_bitset.hpp \
+  /opt/local/include/boost/dynamic_bitset/config.hpp \
+  /opt/local/include/boost/config.hpp \
+  /opt/local/include/boost/config/user.hpp \
+  /opt/local/include/boost/config/select_compiler_config.hpp \
+  /opt/local/include/boost/config/compiler/gcc.hpp \
+  /opt/local/include/boost/config/select_stdlib_config.hpp \
+  /opt/local/include/boost/config/no_tr1/utility.hpp \
+  /opt/local/include/boost/config/stdlib/libstdcpp3.hpp \
+  /opt/local/include/boost/config/select_platform_config.hpp \
+  /opt/local/include/boost/config/platform/macos.hpp \
+  /opt/local/include/boost/config/posix_features.hpp \
+  /opt/local/include/boost/config/suffix.hpp \
+  /opt/local/include/boost/detail/workaround.hpp \
+  /opt/local/include/boost/config.hpp \
+  /opt/local/include/boost/dynamic_bitset_fwd.hpp \
+  /opt/local/include/boost/detail/dynamic_bitset.hpp \
+  /opt/local/include/boost/detail/workaround.hpp \
+  /opt/local/include/boost/detail/iterator.hpp \
+  /opt/local/include/boost/static_assert.hpp \
+  /opt/local/include/boost/detail/workaround.hpp \
+  /opt/local/include/boost/limits.hpp \
+  /opt/local/include/boost/pending/lowest_bit.hpp \
+  /opt/local/include/boost/pending/integer_log2.hpp \
+  /opt/local/include/boost/limits.hpp
 userknowledgebase.o: userknowledgebase.cpp userknowledgebase.h \
   knowledgebase.h chromosome.h feature.h genomicregion.h \
-  ../utility/types.h gene.h knowledgedatabase.h database.h dbexcept.h \
-  pathway.h ../utility/random.h ../utility/types.h ../random/randomc.h \
+  ../utility/types.h /opt/local/include/boost/dynamic_bitset.hpp \
+  /opt/local/include/boost/dynamic_bitset/dynamic_bitset.hpp \
+  /opt/local/include/boost/dynamic_bitset/config.hpp \
+  /opt/local/include/boost/config.hpp \
+  /opt/local/include/boost/config/user.hpp \
+  /opt/local/include/boost/config/select_compiler_config.hpp \
+  /opt/local/include/boost/config/compiler/gcc.hpp \
+  /opt/local/include/boost/config/select_stdlib_config.hpp \
+  /opt/local/include/boost/config/no_tr1/utility.hpp \
+  /opt/local/include/boost/config/stdlib/libstdcpp3.hpp \
+  /opt/local/include/boost/config/select_platform_config.hpp \
+  /opt/local/include/boost/config/platform/macos.hpp \
+  /opt/local/include/boost/config/posix_features.hpp \
+  /opt/local/include/boost/config/suffix.hpp \
+  /opt/local/include/boost/detail/workaround.hpp \
+  /opt/local/include/boost/config.hpp \
+  /opt/local/include/boost/dynamic_bitset_fwd.hpp \
+  /opt/local/include/boost/detail/dynamic_bitset.hpp \
+  /opt/local/include/boost/detail/workaround.hpp \
+  /opt/local/include/boost/detail/iterator.hpp \
+  /opt/local/include/boost/static_assert.hpp \
+  /opt/local/include/boost/detail/workaround.hpp \
+  /opt/local/include/boost/limits.hpp \
+  /opt/local/include/boost/pending/lowest_bit.hpp \
+  /opt/local/include/boost/pending/integer_log2.hpp \
+  /opt/local/include/boost/limits.hpp gene.h knowledgedatabase.h \
+  /opt/local/include/sqlite3.h database.h dbexcept.h pathway.h \
+  ../utility/random.h ../utility/types.h ../random/randomc.h \
   ../utility/strings.h analyzer.h
-resultsdatabase.o: resultsdatabase.cpp resultsdatabase.h database.h \
-  dbexcept.h ../utility/types.h
+resultsdatabase.o: resultsdatabase.cpp resultsdatabase.h \
+  /opt/local/include/sqlite3.h database.h dbexcept.h ../utility/types.h \
+  /opt/local/include/boost/dynamic_bitset.hpp \
+  /opt/local/include/boost/dynamic_bitset/dynamic_bitset.hpp \
+  /opt/local/include/boost/dynamic_bitset/config.hpp \
+  /opt/local/include/boost/config.hpp \
+  /opt/local/include/boost/config/user.hpp \
+  /opt/local/include/boost/config/select_compiler_config.hpp \
+  /opt/local/include/boost/config/compiler/gcc.hpp \
+  /opt/local/include/boost/config/select_stdlib_config.hpp \
+  /opt/local/include/boost/config/no_tr1/utility.hpp \
+  /opt/local/include/boost/config/stdlib/libstdcpp3.hpp \
+  /opt/local/include/boost/config/select_platform_config.hpp \
+  /opt/local/include/boost/config/platform/macos.hpp \
+  /opt/local/include/boost/config/posix_features.hpp \
+  /opt/local/include/boost/config/suffix.hpp \
+  /opt/local/include/boost/detail/workaround.hpp \
+  /opt/local/include/boost/config.hpp \
+  /opt/local/include/boost/dynamic_bitset_fwd.hpp \
+  /opt/local/include/boost/detail/dynamic_bitset.hpp \
+  /opt/local/include/boost/detail/workaround.hpp \
+  /opt/local/include/boost/detail/iterator.hpp \
+  /opt/local/include/boost/static_assert.hpp \
+  /opt/local/include/boost/detail/workaround.hpp \
+  /opt/local/include/boost/limits.hpp \
+  /opt/local/include/boost/pending/lowest_bit.hpp \
+  /opt/local/include/boost/pending/integer_log2.hpp \
+  /opt/local/include/boost/limits.hpp

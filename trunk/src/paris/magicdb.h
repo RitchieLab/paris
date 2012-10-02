@@ -7,7 +7,7 @@
 // #include <soci.h>
 // #include <soci-sqlite3.h>
 #include <string>
-#include "ResultsDatabase.h"
+#include "resultsdatabase.h"
 
 namespace Paris {
 

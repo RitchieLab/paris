@@ -364,8 +364,6 @@ void ParisApp::InitKB(const char* popID, uint geneExpansion, Utility::StringArra
 			ParisResults::db.InitTable("snps",				"CREATE TABLE snps (chrom STRING, rsid INTEGER, pos INTEGER)");
 		}
 
-
-		
 		cerr<<"Initializing knowledge for population: "<<popID<<"\n";
 		std::map<string, Chromosome*>::iterator itr = chromosomes.begin();
 		std::map<string, Chromosome*>::iterator end = chromosomes.end();
@@ -410,6 +408,7 @@ void ParisApp::InitKB(const char* popID, uint geneExpansion, Utility::StringArra
 				}
 				kb->LoadKnowledge(knowDB, chromosomes, FileLogs::logger.kbReport);
 				knowledge[groupType] = kb;
+				++gitr;
 		}
 	
 }

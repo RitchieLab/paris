@@ -42,7 +42,7 @@ void Main::PrintBanner()  {
 #endif
 	cerr<<"          * Brian Yaspan, Jonathan Haines, Marylyn Ritchie and  *\n"
 		 <<"          * Eric Torstenson                                     *\n"
-	    <<"          * Comments/errors to TBD@chgr.mc.vanderbilt.edu       *\n"
+	    <<"          * Comments/errors to software@ritchielab.psu.edu      *\n"
 		 <<"          *******************************************************\n";
 }
 
@@ -255,8 +255,13 @@ void Main::LoadDataPoints(vector<ParisApp::DataPoint>& data, std::multimap<strin
 
 			if (rs.find("r") != string::npos || rs.find("R") != string::npos)
 					rs=rs.erase(0,2);
-
 			uint rsID = atoi(rs.c_str());
+			if(chr=="23")
+				chr="X";
+			else if(chr=="24")
+				chr="Y";
+			else if(chr=="25")
+				chr="MT";
 			if ((chr == "X" || chr == "Y" || atoi(chr.c_str()) > 0)) {
 //	EST-RS>0			if (rs > 0.00) {
 					data.push_back(ParisApp::DataPoint(atoi(rs.c_str()), chr.c_str(), atof(pvalue.c_str()) ));
@@ -267,8 +272,9 @@ void Main::LoadDataPoints(vector<ParisApp::DataPoint>& data, std::multimap<strin
 	}
 	cout<<"\n"<<setw(35)<<filename<<" : "<<snps.size()<<" SNPs ";cout.flush();
 
-	parisApp.InitSNPs(snps, cfg.GetLine("VARIATION_FILENAME").c_str());
-	cout<<" ("<<snps.size()<<" matches in our database )\n";
+	uint matches = parisApp.InitSNPs(snps, cfg.GetLine("VARIATION_FILENAME").c_str());
+// 	cout<<" ("<<snps.size()<<" matches in our database )\n"; 
+	cout<<" ("<<matches << " matches in our database )\n";
 }
 
 

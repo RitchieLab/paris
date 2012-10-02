@@ -28,7 +28,7 @@ public:
 	 * @brief Load up the data from the database, and grab associated genes from the chromsomes
 	 */
 // 	uint LoadKnowledge(soci::session& sociDB, std::map<std::string, Chromosome*>& chromosomes, std::ostream& os);
-	uint LoadKnowledge(KnowledgeDatabase& knowDB, std::map<std::string, Chromosome*>& chromosomes, std::ostream& os);
+	virtual uint LoadKnowledge(KnowledgeDatabase& knowDB, std::map<std::string, Chromosome*>& chromosomes, std::ostream& os);
 
 	/**
 	 * @brief Run analysis for entire project

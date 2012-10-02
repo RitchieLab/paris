@@ -7,8 +7,8 @@ void KnowledgeDatabase::load_alias(map<uint, string> & aliasLookup){
 
 	sqlite3_stmt *statement;
 	int id;
-	string alias;
-	string query = "SELECT DISTINCT alias, gene_id FROM region_alias NATURAL JOIN regions WHERE region_alias_type_id=1300 GROUP BY gene_id";
+	string alias, alias_label;
+	string query = "SELECT DISTINCT alias, alias_label, gene_id FROM region_alias NATURAL JOIN regions WHERE region_alias_type_id=1300 GROUP BY gene_id";
 
 	if(sqlite3_prepare_v2(database, query.c_str(), -1, &statement, 0) == SQLITE_OK)
 	{
@@ -19,9 +19,15 @@ void KnowledgeDatabase::load_alias(map<uint, string> & aliasLookup){
 			
 			if(result == SQLITE_ROW)
 			{
-				id = sqlite3_column_int(statement, 1);
+				id = sqlite3_column_int(statement, 2);
 				alias = (char*)sqlite3_column_text(statement, 0);
-				aliasLookup[id]=alias;
+				alias_label =  (char*)sqlite3_column_text(statement, 1);
+				// use alias_label when alias is an ID number (will only be positive)
+				if(alias.find_first_not_of("0123456789") == std::string::npos){
+					aliasLookup[id]=alias_label;
+				}
+				else
+					aliasLookup[id]=alias;
 			}
 			else
 			{
@@ -250,7 +256,7 @@ void KnowledgeDatabase::get_user_lookups(map<uint, string> & chromLookup, map<st
 
 uint KnowledgeDatabase::get_max_group_id(){
 	sqlite3_stmt *statement;
-	uint max_id;
+	uint max_id=1;
 	string query =  "select max(group_id) from groups";
 	if(sqlite3_prepare_v2(database, query.c_str(), -1, &statement, 0) == SQLITE_OK)
 	{
