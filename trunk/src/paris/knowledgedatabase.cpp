@@ -223,7 +223,7 @@ void KnowledgeDatabase::get_user_lookups(map<uint, string> & chromLookup, map<st
 	sqlite3_stmt *statement;
 	int geneID;
 	string alias,chrom;
-	string query = "SELECT DISTINCT alias, gene_id, chrom FROM region_alias NATURAL JOIN regions WHERE region_alias_type_id=1300 GROUP BY gene_id";
+	string query = "SELECT alias, gene_id, chrom FROM region_alias NATURAL JOIN regions WHERE region_alias_type_id=1300";
 	if(sqlite3_prepare_v2(database, query.c_str(), -1, &statement, 0) == SQLITE_OK)
 	{
 		int result = 0;
