@@ -83,8 +83,8 @@ Analyzer::Result Analyzer::Analyze(uint reportID, std::set<Gene*>& genes, std::m
 						permutation++;
 					//Make sure that we can't draw this again
 					untouchables.insert(f->id);
+					binID++;
 				}
-				binID++;
 
 			}
 
