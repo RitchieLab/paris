@@ -1,39 +1,87 @@
-PARIS Build Instructions
+PARIS README
+2/14/14
 
-1.0	SOCI and SQLite
-1.1	Paris depends on the open source library, SOCI, to connect to the database. For recent versions of Linux and OS X, SQLite is probably already installed. However, SOCI does depend on a specific version of SQLite being installed. I've included instructions for building both libraries. The following directions assume wget and git are both installed. These are pretty standard on modern linux distributions. Because SQLite isn't supported by default, you can't just download the source from the website. Instead, you have to get it from the head via git (I think you can also access it via svn or cvs)
-1.2	Building SQLite
-1.2.1	Download a recent version of SQlite
-1.2.1.1 	Extract and build sources
-1.2.1.1.1	wget http://www.sqlite.org/sqlite-amalgamation-3.6.23.1.tar.gz
-		Once it's downloaded, extract the tarball to a directory where you can build the library. 
-1.2.1.1.2	./configure --prefix=/scratch/soci --enable-shared=no
-        	In this example, we are turning off shared libraries and writing someplace other than the
-		 default directory. If you have sudo rights, you can leave both of these options off. 
-1.2.1.1.3	make install
-1.2.2	Download a recent version of SOCI
-1.2.2.1		git clone git://soci.git.sourceforge.net/gitroot/soci/soci
-1.2.2.1.1	From within the src folder inside the archive, generate the configure script for your platform:
-1.2.2.1.2	./autogen.sh
-1.2.2.1.3	./configure --enable-backend-sqlite3=yes --with-sqlite3=/scratch/soci --prefix=/scratch/soci --enable-shared=no
-                This activates the sqlite3 connectors and points to the path where sqlite can be found. The path is only
-		necessary if you don't have sudo rights. By turning off shared, we can avoid having to make the
-		library available at a place that is searched. If you are installing directly to the default paths, this 
-		isn't necessary.
-1.2.2.1.4	make install
-1.3	Extract paris sources
-1.3.1	Edit the extlibs.make file, set the first line to reflect the path to the directory you installed the soci and 
-	SQLite3 libraries to.
-1.3.2	make 
-
-The executable will be bin/paris64 or bin/paris depending on if your system is 32 or 64bit linux. 
-
-The software should compile on windows and OS X and any other system for which GCC is available. Windows users
-will need to set up MinGW in order to compile the software (www.mingw.org). OS X users need only to ensure that
-they have GCC installed (install the developer tools from the installation media).
-
-When compiling for windows, users should use WIN32=1 when building paris (step 1.3.2, i.e. make WIN32=1 )
+1.  Building
+2.  Running
+3.  Dependencies
+4.  Troubleshooting
 
 
+1.  Building PARIS
+
+Unpack paris.1.1.0.tgz and then run the following commands:
+
+cd paris
+make
+
+The PARIS executable will be placed in the bin directory with an extension appropriate to 
+the system where built.  For example, on a 64 bit Linux system, it will be paris64 and
+on a Mac it will be paris-OSX. 
+
+The software should compile on windows and OS X and any other system for which GCC is available. Windows users will need to set up MinGW in order to compile the software (www.mingw.org). OS X users need only to ensure that they have GCC installed (install the developer tools from the installation media or the App Store).
+
+When compiling for windows, users should use WIN32=1 when building paris (i.e. make WIN32=1 )
+
+2.  Running
+
+PARIS uses a configuration file to control the behavior of the software and provide PARIS
+with necessary information to run.  The simplest way to run PARIS is to pass the name of
+the configuration file to the program as below:
+
+paris64 configuration.txt
+
+It is possible to generate a template configuration
+file by using the --sample-config option:
+
+paris64 --sample-config > configuration.txt
+
+The resulting file can be edited for your own use.  Details on the various options and 
+required input files can be found in the paris-reference.pdf file distributed with the
+software.
 
 
+2.  Dependencies
+
+PARIS utilizes the boost and SQLite libraries.  The underlying data is stored in a SQLite
+database distributed with the code.  IF PARIS fails to compile, one or both of these may 
+need to be installed on your system. (see below)
+
+
+3.  Troubleshooting
+
+If required libraries are missing or not found, you may see error messages similar to the 
+ones below.
+
+  a.  resultsdatabase.h:6:21: error: sqlite3.h: No such file or directory
+	
+      The SQLite header file has not been found.  If SQLite has not been installed, it 
+      needs to be.  If it has been, then if it has been installed in a nonstandard
+      location, that location must be specified in the extlibs.make file at the
+      EXT_INCLUDES line.  For example if it was installed to /opt/local:
+			
+        EXT_INCLUDES+=$(FT_CPPFLAGS) /opt/local/include
+				
+      Another possible cause can be that the development SQLite package needs to be 
+      installed.  Some distributions split the development library package from the
+      runtime.  For example on Ubuntu you would need to install the libsqlite3-dev 
+      package.			
+			
+  b.  types.h:24:36: error: boost/dynamic_bitset.hpp: No such file or directory
+	
+      In this case, the required boost library header has not been found.  Install the 
+      library or if it is in a nonstandard location, specify that in the src/utility 
+      makefile.  The information should be appended to the top line of the file as
+      below (if it was installed to /opt/local):
+			
+        PROJECT_COMPILER_FLAGS=$(FLAGS_DOPT) $(FLAGS_CV) $(FLAGS_MPI) -I/opt/local/include
+
+
+  c.  knowledgedatabase.cpp:(.text+0x7ad): undefined reference to `sqlite3_prepare_v2'
+
+      In this case, the SQLite library has not been found.  If it has been installed in a 
+      nonstandard location, that can be specified in the file extlibs.make.  For example,
+      if it was installed to /opt/local, append that information to the LIB_LINKS line:
+			
+        LIB_LINKS:=-lsqlite3 -ldl -lpthread -L/opt/local/lib
+			
+			

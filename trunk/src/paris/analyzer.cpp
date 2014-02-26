@@ -85,7 +85,6 @@ Analyzer::Result Analyzer::Analyze(uint reportID, std::set<Gene*>& genes, std::m
 					untouchables.insert(f->id);
 					binID++;
 				}
-
 			}
 
 			//Permutation is only significant if it has more sig. features than the original
