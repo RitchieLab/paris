@@ -1,0 +1,12 @@
+== Version 1.1.1 ==
+
+Fixes:
+1. Recognizes multiple alias names from database for genes when user-defined pathway option selected
+
+== Version 1.1.0 ==
+
+1. Replaced SOCI with direct SQLite API calls to database so application no longer needs SOCI library installation
+
+== Version 1.0.0 ==
+
+1. Initial release
