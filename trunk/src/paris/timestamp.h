@@ -7,7 +7,7 @@
 #define APPBUGFIX 1
 
 #define BUILD_NUMBER 62
-#define BUILD_DATE "Wed Sep  5 17:34:50 CDT 2012"
+#define BUILD_DATE "Thu May  1 19:25:00 CDT 2014"
 
 #ifdef DEBUG
 #define BUILD_TYPE "Debug"
