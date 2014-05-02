@@ -44,7 +44,7 @@ public:
 		 * @brief operator required for STL sorting
 		 */
 		bool operator<(const Result& other) const {
-			assert(isRefinement || other.isRefinement || totPerms == other.totPerms);
+// 			assert(isRefinement || other.isRefinement || totPerms == other.totPerms);
 			return sigPerms < other.sigPerms;
 		}
 
@@ -66,8 +66,9 @@ public:
 		 * @brief Returns the pvalue in string form, appending the < in cases where there were no permutations to outperform the local one
 		 */
 		std::string GetPValue() const{
-			assert(totPerms > 0);
-			if (!isRefinement && sigPerms == 0)
+			if(totPerms==0)
+				return "NA";
+			else if (!isRefinement && sigPerms == 0)
 				return "< " + Utility::ToString(1.0/float(totPerms), (int)log10(totPerms));
 			else
 				return Utility::ToString(float(sigPerms)/float(totPerms), (int)log10(totPerms));
@@ -104,7 +105,10 @@ public:
 	static Utility::Random &rnd;
 	static std::pair<float, float> refinementThreshold;		///< inclusive boundaries for means which are considered borderline. Set these to be the same to never return borderline status
 private:
-
+		/**
+		 * @brief returns true if bins are large enough for permutation testing of features
+		 */
+	bool CheckBinSize(std::multiset<uint> &binIDs, std::map<uint, std::vector<Feature*> >& bins);
 };
 
 } //Paris

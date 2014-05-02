@@ -35,7 +35,7 @@ Analyzer::Result Analyzer::Analyze(uint reportID, std::set<Gene*>& genes, std::m
 	uint sigCount = 0;
 
 	set<Feature*> usedFeatures;
-
+	
 	Analyzer::Result result(reportID);
 
 	//Set up a pvalue of 1.0 to short circuit pathways with 0 significant features
@@ -49,7 +49,7 @@ Analyzer::Result Analyzer::Analyze(uint reportID, std::set<Gene*>& genes, std::m
 		//query how many of each bin we need to test
 		gene->GetFeatureMap(binIDs, featureIDs);
 
-		//Set up the number of features that have 1 or more signficant pvalues in them
+		//Set up the number of features that have 1 or more significant pvalues in them
 		uint sigMembers = gene->CountSignificantMembers(usedFeatures, result.simpleFeatures, result.complexFeatures, result.sigSimple, result.sigComplex);
 		if (sigMembers > 0)
 			result.sigGenes++;
@@ -59,10 +59,19 @@ Analyzer::Result Analyzer::Analyze(uint reportID, std::set<Gene*>& genes, std::m
 	}
 
 	if (verbose)
-		cerr<<"\tGenes: "<<setw(5)<<genes.size()<<"\tFeatures: "<<setw(5)<<binIDs.size()<<"\tSigificant: "<<setw(5)<<sigCount<<"..."; cerr.flush();
+		cerr<<"\tGenes: "<<setw(5)<<genes.size()<<"\tFeatures: "<<setw(5)<<binIDs.size()<<"\tSignificant: "<<setw(5)<<sigCount<<"..."; cerr.flush();
 
 	//Short circuit to avoid testing situations that can never be less than 1.0
 	if (sigCount > 0) {
+		// check that bins are large enough for permutation testing for this set of features
+		if(!CheckBinSize(binIDs, bins)){
+			if(verbose)
+				cerr << " no permutations run -- bins too small" << endl;
+			// reset Result to show that no permutations were done
+			result.totPerms=0;
+			return result;
+		}
+	
 		uint significantPTests=0;
 		for (uint i=0; i<permutationCount; i++) {
 			uint permutation = 0;
@@ -102,7 +111,25 @@ Analyzer::Result Analyzer::Analyze(uint reportID, std::set<Gene*>& genes, std::m
 		  cerr<<" Sig PTests: "<<setw(8)<<0.0<<" -> ";
 	if (verbose)
 		cerr<<result.PValue()<<"\n";
+		
 	return result;
+}
+
+bool Analyzer::CheckBinSize(std::multiset<uint> &binIDs,
+	std::map<uint, std::vector<Feature*> >& bins){
+	
+	std::multiset<uint>::iterator binEnd = binIDs.end();
+	
+	for(std::multiset<uint>::iterator binIter = binIDs.begin(); binIter != binEnd;
+		binIter = binIDs.upper_bound(*binIter)){
+		int count=int(binIDs.count(*binIter));
+		// as we are sampling without replacement and excluding the original features
+		// we need the bin to be twice the size of the count
+		if(int(bins[*binIter].size()) - count*2 <= 0){
+			return false;
+		}
+	}
+	return true;
 }
 
 }

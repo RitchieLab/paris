@@ -283,7 +283,6 @@ void ParisApp::InvestigatePathway(uint permutationCount, float dataSig, float pa
 				Gene *gene = *gItr;
 				std::set<Gene*> singleGene;
 				singleGene.insert(gene);
-
 				Analyzer::Result result = analyzer.Analyze(gene->id, singleGene, bins, permutationCount, false);
 				if (result.PValue() <= pathSig)
 					file<<"\t<TR bgcolor=#E9E0DB border=1>";
@@ -313,8 +312,9 @@ void ParisApp::InvestigatePathway(uint permutationCount, float dataSig, float pa
 						else
 							pwResult = resultBuffer[(*itr)->GroupID()];
 						if (pathway->GroupID() != (*itr)->GroupID()) {
-							if (pwResult.PValue() < pathSig)
+							if (pwResult.PValue() < pathSig){
 								file<<"<B>"<<(*itr)->Name()<<"</B>";
+							}
 							else if (showAllPathways)
 								file<<(*itr)->Name();
 						}
@@ -324,7 +324,8 @@ void ParisApp::InvestigatePathway(uint permutationCount, float dataSig, float pa
 
 				gItr++;
 			}
-			file<<"</TABLE><P><I>*pvalues of "<<dataSig<<" or less.<P>Shaded rows indicate genes whose pvalues are "<<pathSig<<" or less.</BODY></HTML>\n";
+			file<<"</TABLE><P><I>*pvalues of "<<dataSig<<" or less.<P>Shaded rows indicate genes whose pvalues are "<<pathSig<<" or less.</P>";
+			file << "<P><I>NA indicates where bins were not large enough for permutation testing.</BODY></HTML>\n";
 		}
 	}
 	//Evaluate each group for statistical value (including the ptests)

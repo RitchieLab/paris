@@ -125,7 +125,8 @@ Analyzer::Result Pathway::RunAnalysis(std::map<uint, std::vector<Feature*> >& bi
 		cerr<<"Pathway: "<<name; cerr.flush();
 	}
 
-	Analyzer::Result result = analyzer.Analyze(groupID, genes, bins, permutationCount, verbose);
+		Analyzer::Result result = analyzer.Analyze(groupID, genes, bins, permutationCount, verbose);
+		
 
 	return result;
 }

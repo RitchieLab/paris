@@ -211,6 +211,7 @@ void KnowledgeBase::ReportResults(std::multiset<Analyzer::Result>& scores, ostre
 
 void KnowledgeBase::ResultsFooter(std::ostream& os, float datasetSignificance, float pathwaySignificance) {
 	os<<"* genes that contain one or more feature with a pvalue at or below "<<datasetSignificance<<".\n**pvalues of "<<pathwaySignificance<<" or less. \n";
+	os<<"NA indicates where bins were not large enough for permutation testing.\n";
 }
 	
 }

@@ -4,10 +4,10 @@
 
 #define APPMAJOR 1
 #define APPMINOR 1
-#define APPBUGFIX 1
+#define APPBUGFIX 2
 
-#define BUILD_NUMBER 62
-#define BUILD_DATE "Thu May  1 19:25:00 CDT 2014"
+#define BUILD_NUMBER 64
+#define BUILD_DATE "Fri May  2 14:22:44 CDT 2014"
 
 #ifdef DEBUG
 #define BUILD_TYPE "Debug"
