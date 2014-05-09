@@ -1,0 +1,21 @@
+== Version 1.1.2 ==
+
+Fixes:
+
+1. Added check that a bin has enough features within it to run permutation testing on a given pathway or group.  As PARIS selects without replacement and excludes the original features from the permutation test, it will now not run a permutation test on a pathway that cannot select enough features from a bin.
+
+== Version 1.1.1 ==
+
+Fixes:
+
+1. Recognizes multiple alias names from database for genes when user-defined pathway option selected
+
+2.  No longer counts features in the pathways as bin draws and no longer counts repeated features as bin draws during permutation testing.  Previously, although a feature that was drawn multiple times would only be checked once for significance during permutation testing, a replacement for it was not selected.  Therefore, the number of randomly drawn features checked for significance might be less than the total features in the original pathway.  That could result in a lower p value score in some cases. 
+
+== Version 1.1.0 ==
+
+1. Replaced SOCI with direct SQLite API calls to database so application no longer needs SOCI library installation
+
+== Version 1.0.0 ==
+
+1. Initial release
