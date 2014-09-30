@@ -9,7 +9,7 @@ PARIS README
 
 1.  Building PARIS
 
-Unpack paris.1.1.0.tgz and then run the following commands:
+Unpack the paris.#.#.#.tgz archive and then run the following commands:
 
 cd paris
 make
