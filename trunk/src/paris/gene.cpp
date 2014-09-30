@@ -55,14 +55,14 @@ void Gene::AddFeature(Feature* feature) {
 	}
 }
 
-void Gene::DetailedReport(std::map<uint, uint>& snps, const char *prefix, std::ostream& os) {
+void Gene::DetailedReport(const char *prefix, std::ostream& os) {
 	std::stringstream details;
 	details<<prefix<<","<<id<<","<<_chromosome<<","<<_begin<<","<<_end;
 	uint sigPValues = 0, nsigPValues=0;
 	std::set<Feature*>::const_iterator itr = features.begin();
 	std::set<Feature*>::const_iterator end = features.end();
 	while (itr != end) {
-		(*itr++)->DetailedReport(snps, details.str().c_str(), os, sigPValues, nsigPValues);
+		(*itr++)->DetailedReport(details.str().c_str(), os, sigPValues, nsigPValues);
 	}
 }
 
@@ -98,25 +98,32 @@ void Gene::ComprehensiveReport(std::ostream& os) {
 	}
 }
 
-void Gene::CollectSNPs(std::set<uint>& snps) {
+void Gene::CollectSNPs(std::set< std::pair<uint,uint> >& snps) {
 	std::set<Feature*>::iterator itr = features.begin();
 	std::set<Feature*>::iterator end = features.end();
 
 	while (itr != end) {
 		Feature *feature = *itr++;
+/*
 		std::map<uint, float> pvalues = feature->GetPValues();
 		std::map<uint, float>::iterator pitr = pvalues.begin();
 		std::map<uint, float>::iterator pend = pvalues.end();
 
 		while (pitr != pend) 
 			snps.insert(pitr++->first);
+*/
+		std::vector< std::pair< float, std::pair<uint, uint> > > pscores = feature->GetPValues();
+		for (uint i = 0; i < pscores.size(); i++) {
+			snps.insert(pscores[i].second);
+		}
 	}
 }
 void Gene::CollectPValues(vector<float>& pvalues) const {
 	std::set<Feature*>::iterator itr = features.begin();
 	std::set<Feature*>::iterator end = features.end();
 
-	std::set<uint> snps;							///< We'll keep SNPs we've added in here, to avoid repeating them when they appear in multiple features
+/*
+	std::set<uint> snps;                                                    ///< We'll keep SNPs we've added in here, to avoid repeating them when they appear in multiple features
 	while (itr != end ) {
 		Feature *feature = *itr++;
 
@@ -133,6 +140,17 @@ void Gene::CollectPValues(vector<float>& pvalues) const {
 			pitr++;
 		}
 	}
+*/
+	std::set< std::pair<uint,uint> > snps;
+	while (itr != end ) {
+		Feature *feature = *itr++;
+		std::vector< std::pair< float, std::pair<uint, uint> > > pscores = feature->GetPValues();
+		for (uint i = 0; i < pscores.size(); i++) {
+			if (snps.insert(pscores[i].second).second == true) { // actually inserted, wasn't already there
+				pvalues.push_back(pscores[i].first);
+			}
+		}
+	}
 }
 
 void Gene::ListFeatures(ostream& os) {
@@ -142,7 +160,7 @@ void Gene::ListFeatures(ostream& os) {
 	os<<"Gene: "<<id<<"\n";
 	int i=0;
 	while (itr != end) {
-		os<<(i++) + 1<<"\t"<<(*itr)->id<<"\t"<<(*itr)->_begin<<"\t"<<(*itr)->_end<<"\t"<<(*itr)->GetPValues().size()<<"\n";
+		os<<(i++) + 1<<"\t"<<(*itr)->id<<"\t"<<(*itr)->_begin<<"\t"<<(*itr)->_end<<"\t"<<(*itr)->FeatureSize()<<"\n";
 		itr++;
 	}
 }

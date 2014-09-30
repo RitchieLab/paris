@@ -59,12 +59,12 @@ public:
 	/**
 	 * @Brief Writes details of the feature to the stream
 	 */
-	void DetailedReport(std::map<uint, uint>& snps, const char *prefix, std::ostream& os, uint& totalSig, uint &totalNSig);	///< Report all SNPs associated with the feature
+	void DetailedReport(const char *prefix, std::ostream& os, uint& totalSig, uint &totalNSig);	///< Report all SNPs associated with the feature
 
 	/**
 	 * @brief SNP IDX (RS) -> score
 	 */
-	std::map<uint, float> GetPValues();
+	std::vector< std::pair< float, std::pair<uint, uint> > > GetPValues();
 
 	std::set<uint> GeneIDs();					///< Return the set of gene IDs
 	uint BinIndex();								///< Return the bin Index
@@ -74,7 +74,7 @@ public:
 private:
 	std::set<uint> geneIDs;						///< List of gene IDs which this feature is associated
 	uint binIndex;									///< Which bin will this feature be found
-	std::map<uint, float> pscores;			///< SNP Idx -> score
+	std::vector< std::pair< float, std::pair<uint, uint> > > pscores;	///< pscore,(position,rsid) since std::tuple is only in C++11
 	uint sigCount;									///< Count of significant values
 };
 

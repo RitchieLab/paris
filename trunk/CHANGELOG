@@ -1,3 +1,21 @@
+== Version 1.1.3 ==
+
+Fixes:
+
+1. Now filters out SNPs from the variations database which have more than one genomic position, instead of using up to one position per chromosome.
+
+2. Now allows for multiple SNPs in the variations database to share the same genomic position, instead of silently choosing only one.
+
+3. Now correctly applies GENE_BOUNDARY_EXTENSION to both ends of the gene, instead of only the upstream end.
+
+4. Now correctly handles overlapping LD feature regions, instead of occasionally missing one or more that should have matched a SNP or gene.
+
+5. Now discards input SNPs with malformed RSIDs, instead of trying to parse them (i.e. "7:67602:A_AT" is no longer parsed as "rs7").
+
+6. Now accepts input SNPs on chromosome 26/MT.
+
+7. Now allows the same RSID to be input more than once and uses both, instead of silently dropping one.
+
 == Version 1.1.2 ==
 
 Fixes:

@@ -139,8 +139,8 @@ FileBuffer<T>::FileBuffer(const char *label, size_t initBufferSize, size_t maxBu
 		curCount(0), lastCount(0) { 
 	oFilename = string(label) + ".outbuff";
 	iFilename = string(label) + ".inbuff";
-	unlink(oFilename.c_str());
-	unlink(iFilename.c_str());
+	this->unlink(oFilename.c_str());
+	this->unlink(iFilename.c_str());
 }
 
 template<class T>
@@ -148,12 +148,12 @@ inline
 FileBuffer<T>::~FileBuffer() { 
 	if (ifile) {
 		ifile->close();
-		unlink(iFilename.c_str());
+		this->unlink(iFilename.c_str());
 		delete ifile;
 	}
 	if (ofile) {
 		ofile->close();
-		unlink(oFilename.c_str());
+		this->unlink(oFilename.c_str());
 		delete ofile;
 	}
 }
@@ -176,10 +176,10 @@ void FileBuffer<T>::Close(const char *filename) {
 	ofile->close();
 	delete ofile;
 	ofile=NULL;
-	unlink(filename);
+	this->unlink(filename);
 	if (rename(oFilename.c_str(), filename)!=0) 
 		cerr<<"Error renaming file."<<filename<<"\n";
-	unlink(iFilename.c_str());
+	this->unlink(iFilename.c_str());
 }
 
 template<class T>

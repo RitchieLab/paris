@@ -62,14 +62,10 @@ void Chromosome::MergeFeaturesIntoGenes(ostream& os) {
 				gene->AddFeature(feature);
 
 				if (FileLogs::WriteFeatureDetails) {
-					std::map<uint, float> pvalues = feature->GetPValues();
-					std::map<uint, float>::iterator pi = pvalues.begin();
-					std::map<uint, float>::iterator pe = pvalues.end();
-
-					while (pi != pe) {
-							FileLogs::logger.featureDetails<<chrID<<","<<gene->id<<","<<gene->EnsemblID()<<","<<feature->_begin<<","<<feature->_end<<","<<snps[pi->first]<<","<<pi->first<<","<<pi->second<<"\n";
+					std::vector< std::pair< float, std::pair<uint, uint> > > pscores = feature->GetPValues();
+					for (uint i = 0; i < pscores.size(); i++) {
+						FileLogs::logger.featureDetails<<chrID<<","<<gene->id<<","<<gene->EnsemblID()<<","<<feature->_begin<<","<<feature->_end<<","<<pscores[i].second.second<<","<<pscores[i].second.first<<","<<pscores[i].first<<"\n";
 						//FileLogs::logger.featureDetails<<"\t[ "<<pi->first<<" "<<pi->second<<" ]";
-						pi++;
 					}
 				}
 				//if (feature->_begin == feature->_end)
@@ -131,6 +127,7 @@ uint Chromosome::LoadGenes(KnowledgeDatabase& knowDB, uint popID, uint geneExpan
 			gene_iter->start-=geneExpansion;
 		else
 			gene_iter->start = 0;
+		gene_iter->end += geneExpansion;
 
 		//I think it's OK to let the gene stretch past the end of the chromosome
 // 		uint end				= row.get<int>(5)+geneExpansion;
@@ -149,19 +146,21 @@ void Chromosome::AddFeature(uint geneID, uint start, uint stop) {
 		ss << "INSERT INTO features VALUES (" << feature->id << "," << chrID << "," << start << "," << stop <<")";
 		ParisResults::db.query(ss.str());
 	}
-	featureEnd.insert(std::pair<uint, Feature*>(stop, feature));
-	featureStart.insert(std::pair<uint, Feature*>(start,feature));
+	for (uint z = start / FEATURE_ZONE_SIZE; z <= stop / FEATURE_ZONE_SIZE; z++) {
+		featureZone.insert(std::pair<uint, Feature*>(z, feature));
+	}
 
 	features.push_back(feature);
 }
 // uint Chromosome::LoadFeatures(soci::session& sociDB, const char *popID, uint &featureID) {
 uint Chromosome::LoadFeatures(KnowledgeDatabase& knowDB, const char *popID, uint &featureID) {
 	std::set<uint> availableSNPs;
-	std::map<uint, uint>::iterator itr = snps.begin();
-	std::map<uint, uint>::iterator end = snps.end();
+	std::multimap<uint, uint>::iterator itr = positionSNPs.begin();
+	std::multimap<uint, uint>::iterator end = positionSNPs.end();
 
 	while (itr != end) {
-		availableSNPs.insert(itr->first);
+		if (badPositions.count(itr->first) == 0 && badSNPs.count(itr->second) == 0)
+			availableSNPs.insert(itr->first);
 		itr++;
 	}
 // 	rowset<row> rs = (sociDB.prepare << "SELECT DISTINCT start, stop FROM ld_blocks WHERE chromosome=:id AND population_id=:popID", use(chrID), use(string(popID)));
@@ -185,8 +184,8 @@ uint Chromosome::LoadFeatures(KnowledgeDatabase& knowDB, const char *popID, uint
 
 		AddFeature(start, start, stop);
 		//Lets remove any SNPs contained within the feature from the pool of available SNPs
-		std::map<uint, uint>::iterator itr = snps.lower_bound(start);
-		std::map<uint, uint>::iterator end = snps.upper_bound(stop);
+		std::multimap<uint, uint>::iterator itr = positionSNPs.lower_bound(start);
+		std::multimap<uint, uint>::iterator end = positionSNPs.upper_bound(stop);
 		
 		while (itr != end) {
 			
@@ -203,71 +202,85 @@ uint Chromosome::LoadFeatures(KnowledgeDatabase& knowDB, const char *popID, uint
 	std::set<uint>::iterator avSNPend = availableSNPs.end();
 
 	while (avSNP != avSNPend) {
-		uint snp = *avSNP++;
-		if (featureEnd.find(snp) == featureEnd.end() && featureStart.find(snp) == featureStart.end()) {
-			uint pos=snps[snp];
-			AddFeature(pos, snp, snp);
+		uint pos = *avSNP++;
+		if (GetFeatures(pos, pos).empty()) {
+			AddFeature(pos, pos, pos);
 			count++;
 		}
 	}
 
 	
-	cerr<<"Chromosome "<<chrID<<" Total SNPs: "<<snps.size()<<" Loaded "<<features.size()<<" Features ("<<featureCount<<")\n";
+	cerr<<"Chromosome "<<chrID<<" Total SNPs: "<<SnpCount()<<" Loaded "<<FeatureCount()<<" Features ("<<featureCount<<")\n";
 	return count;
 }
 void Chromosome::AddValue(uint snpIndex, float pvalue) {
 	const char *c = chrID.c_str();
-	if (posLookup.find(snpIndex) == posLookup.end())
+	if (badSNPs.count(snpIndex) > 0)
 		return;
-	assert(posLookup.find(snpIndex) != posLookup.end());
-	uint pos = posLookup[snpIndex];
-
 	uint featureCount = 0;
+	std::multimap<uint, uint>::iterator sItr = snpPositions.lower_bound(snpIndex);
+	std::multimap<uint, uint>::iterator sEnd = snpPositions.upper_bound(snpIndex);
+	for ( ; sItr != sEnd ; sItr++ ) {
+		uint pos = sItr->second;
+		if (badPositions.count(pos) > 0)
+			continue;
 
-	std::map<uint, Feature*>::iterator fItr = featureEnd.lower_bound(pos);
-	std::map<uint, Feature*>::iterator fEnd = featureEnd.upper_bound(pos);
-
-	if (ParisResults::resultsDB){
-// 		ParisResults::db.sociDB<<"INSERT INTO snps VALUES (:chrID, :rsID, :pos)", use(chrID), use(snpIndex), use(pos);
-		stringstream ss;
-		ss << "INSERT INTO snps VALUES (" << chrID << "," << snpIndex <<"," << pos << ")";
-		ParisResults::db.query(ss.str());
-	}
-	
-	while (fItr != fEnd) {
-		Feature *f = fItr++->second;
-		f->AddValue(snpIndex, c, pos, pvalue);
-		featureCount++;
-	}
-	//Just because the end has passed the local value, the beginning might not have
-	if (fEnd != featureEnd.end()) {
-		Feature *f = fItr++->second;
-		if (f->_begin <= pos) {
+		if (ParisResults::resultsDB){
+// 			ParisResults::db.sociDB<<"INSERT INTO snps VALUES (:chrID, :rsID, :pos)", use(chrID), use(snpIndex), use(pos);
+			stringstream ss;
+			ss << "INSERT INTO snps VALUES (" << chrID << "," << snpIndex <<"," << pos << ")";
+			ParisResults::db.query(ss.str());
+		}
+		
+		// the original logic will not work correctly in case there are
+		// features which overlap eachother; let's simplify --atf 2014-09-23
+/*
+		std::map<uint, Feature*>::iterator fItr = featureEnd.lower_bound(pos)
+		std::map<uint, Feature*>::iterator fEnd = featureEnd.upper_bound(pos);
+		while (fItr != fEnd) {
+			Feature *f = fItr++->second;
 			f->AddValue(snpIndex, c, pos, pvalue);
 			featureCount++;
 		}
-	}
-
-
-	fItr = featureStart.lower_bound(pos);
-	fEnd = featureStart.upper_bound(pos);
-	if (fItr != featureStart.end()) {
-		if (fItr == fEnd) {
-			if (featureEnd.find(fItr->first) == featureEnd.end()) {
-				fItr->second->AddValue(snpIndex, c, pos, pvalue);
-				featureCount++;
-			}
-		}
-
-		while (fItr != fEnd) {
+		//Just because the end has passed the local value, the beginning might not have
+		if (fEnd != featureEnd.end()) {
 			Feature *f = fItr++->second;
-			if (featureEnd.find(fItr->first) == featureEnd.end()) {
+			if (f->_begin <= pos) {
 				f->AddValue(snpIndex, c, pos, pvalue);
 				featureCount++;
 			}
 		}
+
+
+		fItr = featureStart.lower_bound(pos);
+		fEnd = featureStart.upper_bound(pos);
+		if (fItr != featureStart.end()) {
+			if (fItr == fEnd) {
+				if (featureEnd.find(fItr->first) == featureEnd.end()) {
+					fItr->second->AddValue(snpIndex, c, pos, pvalue);
+					featureCount++;
+				}
+			}
+
+			while (fItr != fEnd) {
+				Feature *f = fItr++->second;
+				if (featureEnd.find(fItr->first) == featureEnd.end()) {
+					f->AddValue(snpIndex, c, pos, pvalue);
+					featureCount++;
+				}
+			}
+		}
+		assert(featureCount>0);
+*/
+		std::set<Feature*> matchedFeatures = GetFeatures(pos, pos);
+		std::set<Feature*>::iterator fItr = matchedFeatures.begin();
+		std::set<Feature*>::iterator fEnd = matchedFeatures.end();
+		while (fItr != fEnd) {
+			Feature *f = *fItr++;
+			f->AddValue(snpIndex, c, pos, pvalue);
+			featureCount++;
+		}
 	}
-	assert(featureCount>0);
 }
 
 void Chromosome::InitBins(std::set<Feature*, SortByFeatureSize>& bins, std::set<Feature*>& singleFeatureBins, ostream& os) {
@@ -305,15 +318,30 @@ uint Chromosome::Length() {
 }
 
 void Chromosome::AddSNP(uint rsID, uint pos) {
-	snps[pos] = rsID;
-	posLookup[rsID] = pos;
+	snpPositions.insert(std::pair<uint, uint>(rsID, pos));
+	positionSNPs.insert(std::pair<uint, uint>(pos, rsID));
+
+	if (0 && snpPositions.count(rsID) > 1) { // TODO: optional behavior?
+		badSNPs.insert(rsID);
+	}
+	if (0 && positionSNPs.count(pos) > 1) { // TODO: optional behavior?
+		badPositions.insert(pos);
+	}
 
 	if (pos > length)
 		length = pos;
 }
 
+bool Chromosome::AmbiguousSNP(uint rsID) {
+	if (snpPositions.count(rsID) > 0) {
+		badSNPs.insert(rsID);
+		return true;
+	}
+	return false;
+}
+
 uint Chromosome::SnpCount() {
-	return snps.size();
+	return snpPositions.size();
 }
 
 uint Chromosome::FeatureCount() {
@@ -326,6 +354,11 @@ uint Chromosome::FeatureCount() {
 std::set<Feature*> Chromosome::GetFeatures(uint start, uint stop) {
 	std::set<Feature*> matches;
 	
+	// the original logic does not correctly handle the case where
+	// one feature region completely encloses the gene region, but
+	// there is a second feature region whose endpoint is between
+	// the gene endpoint and the enclosing feature endpoint --atf 2014-09-22
+/*
 	std::map<uint, Feature*>::iterator itr = featureEnd.lower_bound(start);
 	std::map<uint, Feature*>::iterator end = featureEnd.upper_bound(stop);
 	
@@ -351,29 +384,36 @@ std::set<Feature*> Chromosome::GetFeatures(uint start, uint stop) {
 			matches.insert(f);
 		}
 	}
+*/
+	std::map<uint, Feature*>::iterator fItr = featureZone.lower_bound(start / FEATURE_ZONE_SIZE);
+	std::map<uint, Feature*>::iterator fEnd = featureZone.upper_bound(stop / FEATURE_ZONE_SIZE);
+	while (fItr != fEnd) {
+		Feature *f = fItr++->second;
+		if (f->_begin <= stop && f->_end >= start)
+			matches.insert(f);
+	}
 
 	return matches;
 }
 
 
 uint Chromosome::GetSNP(uint pos) {
-	return snps[pos];
+	// we might have more than one rsid at the position, so we'll just have to pick one --atf 2014-09-26
+	return positionSNPs.find(pos)->second;
 }
 
-std::map<uint, uint> &Chromosome::GetSNPs() {
-	return snps;
+std::multimap<uint, uint> &Chromosome::GetSNPs() {
+	return positionSNPs;
 }
 
-std::map<uint, uint> Chromosome::GetSnps(uint start, uint stop) {
-	std::map<uint, uint>::iterator itr = snps.lower_bound(start);
-	std::map<uint, uint>::iterator end = snps.upper_bound(stop);
+std::multimap<uint, uint> Chromosome::GetSnps(uint start, uint stop) {
+	std::multimap<uint, uint>::iterator itr = positionSNPs.lower_bound(start);
+	std::multimap<uint, uint>::iterator end = positionSNPs.upper_bound(stop);
 
-	std::map<uint, uint> matches;
-	if (itr != snps.end()) {
-		while (itr != end) {
-			matches[itr->first] = itr->second;
-			itr++;
-		}
+	std::multimap<uint, uint> matches;
+	while (itr != end) {
+		matches.insert(*itr);
+		itr++;
 	}
 	return matches;
 }

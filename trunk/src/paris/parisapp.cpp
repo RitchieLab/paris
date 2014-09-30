@@ -90,6 +90,14 @@ uint ParisApp::InitBins(uint idealBinSize) {
 			spf++;
 
 	}
+	// it is (now) possible for a single-point feature to have multiple SNPs in it
+	sfItr = binpool.begin();
+	sfEnd = binpool.end();
+	while (sfItr != sfEnd) {
+		Feature *f = *sfItr++;
+		if (f->_begin == f->_end)
+			spf++;
+	}
 
 	//We want to mix the bins up, so that our bins aren't grouped the
 	//same for each random seed
@@ -425,6 +433,7 @@ uint ParisApp::InitSNPs(std::multimap<string, uint>& allSNPs, const char *fn) {
 		exit(1);
 	}
 	uint count = 0;
+	std::set<uint> snps_seen;
 	
 	while (file.good()) {
 		char label[3];
@@ -459,10 +468,25 @@ uint ParisApp::InitSNPs(std::multimap<string, uint>& allSNPs, const char *fn) {
 					file.read((char*)&rs, 4);
 					file.read((char*)&pos, 4);
 
-					if (snps.size() == 0 || (snps.find(rs) != snps.end())) {
+					bool bad = false;
+					if (true) { // TODO: optional global ambiguity check
+						if (snps_seen.insert(rs).second == false) {
+						//	cerr<<"bad snp: "<<rs<<"\n";
+							bad = true;
+							std::map<std::string, Chromosome*>::iterator cItr = chromosomes.begin();
+							std::map<std::string, Chromosome*>::iterator cEnd = chromosomes.end();
+							while (cItr != cEnd)
+								cItr++->second->AmbiguousSNP(rs);
+						}
+					}
+
+					// why load *all* SNPs on the chromosome if the user provided none? --atf 2014-09-23
+					if (/*snps.size() == 0 ||*/ (snps.find(rs) != snps.end())) {
 						//EST-RS>0 if (rs > 0) {
 							newChrom->AddSNP(rs, pos);
 							count++;
+							if (bad)
+								newChrom->AmbiguousSNP(rs);
 						//}
 					}
 				}

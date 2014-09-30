@@ -23,6 +23,12 @@
 
 namespace Paris {
 
+// The zone size is a tradeoff between storage size (larger zones -> fewer
+// zone:feature pair records) and lookup speed (smaller zones -> fewer to
+// scan for matches against a given input position/region).
+// For LD feature regions, 100kb errs towards lower memory usage (~1.03
+// records per LD block). --atf 2014-09-24
+#define FEATURE_ZONE_SIZE 100000
 
 
 class Chromosome {
@@ -40,6 +46,11 @@ public:
 	 * Snps are stored position->rsID
 	 */
 	void AddSNP(uint rsID, uint pos);
+
+	/**
+	 * @brief Notify that a SNP (RS#) has been seen again on a later chromosome.
+	 */
+	bool AmbiguousSNP(uint rsID);
 
 	/**
 	 * @brief Add a feature to the chromosome, and attribute it to the gene, geneID
@@ -106,12 +117,12 @@ public:
 	/**
 	 * @brief returns SNPs between start and stop
 	 */
-	std::map<uint, uint> GetSnps(uint start, uint stop);
+	std::multimap<uint, uint> GetSnps(uint start, uint stop);
 
 	/**
 	 * @Brief Returns all SNPs (position -> rsID)
 	 */
-	std::map<uint, uint> &GetSNPs();
+	std::multimap<uint, uint> &GetSNPs();
 
 	/**
 	 * @brief return the chromosome's ID
@@ -126,13 +137,13 @@ public:
 private:
 	std::string chrID;									///< Numerical ID
 	std::vector<Feature*> features;					///< features associated with the chromosome
-	std::multimap<uint, Feature*> featureEnd;		///< position -> Feature lookup
-	std::multimap<uint, Feature*> featureStart;	///< startPosition -> Feature Lookup
+	std::multimap<uint, Feature*> featureZone;	///< zone(pos/100k) -> Feature Lookup
 	std::map<uint, Gene*> genes;						///< genes
 
-	//I probably can get rid of this one
-	std::map<uint, uint> snps;							///< position -> rsID
-	std::map<uint, uint> posLookup;					///< rsID -> position
+	std::multimap<uint, uint> positionSNPs;			///< position -> rsid
+	std::multimap<uint, uint> snpPositions;			///< rsid -> position
+	std::set<uint> badSNPs;							///< rsids which should be ignored
+	std::set<uint> badPositions;					///< rsids which should be ignored
 	uint length;											///< Length of the chromosome
 };
 

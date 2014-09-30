@@ -55,20 +55,27 @@ void Pathway::GenerateSnpReport(std::ostream& os, std::map<std::string, Chromoso
 
 		std::set<Feature*>::iterator fItr = features.begin();
 		std::set<Feature*>::iterator fEnd = features.end();
-		Chromosome *c					= chromosomes[gene->_chromosome];
+	//	Chromosome *c					= chromosomes[gene->_chromosome];
 
 		while (fItr != fEnd) {
 			Feature *f					= *fItr++;
 
+/*
 			std::map<uint, float> pvalues = f->GetPValues();
 			std::map<uint, float>::iterator pvItr = pvalues.begin();
 			std::map<uint, float>::iterator pvEnd = pvalues.end();
 
 			while (pvItr != pvEnd) {
-				uint pos						= pvItr->first;
-				float pval					= pvItr->second;
+				uint pos   = pvItr->first;
+				float pval = pvItr->second;
 				pvItr++;
-				uint rsid					= c->GetSNP(pos);
+				uint rsid  = c->GetSNP(pos);
+*/
+			std::vector< std::pair< float, std::pair<uint, uint> > > pscores = f->GetPValues();
+			for (uint i = 0; i < pscores.size(); i++) {
+				float pval		= pscores[i].first;
+				uint pos		= pscores[i].second.first;
+				uint rsid		= pscores[i].second.second;
 				os<<"rs"<<rsid<<","
 					<<gene->_chromosome<<","
 					<<pos<<","
@@ -96,7 +103,7 @@ void Pathway::ReportGenesAndFeatures(std::ostream& os) {
 }
 
 uint Pathway::TotalSNPs() {
-	std::set<uint> snps;
+	std::set< std::pair<uint,uint> > snps;
 
 	std::set<Gene*>::iterator itr = genes.begin();
 	std::set<Gene*>::iterator end = genes.end();
@@ -114,8 +121,7 @@ void Pathway::DetailedReport(std::map<std::string, Chromosome*>& chroms, const c
 	ss<<prefix<<","<<name;
 	while (itr != end) {
 		Gene *gene = *itr++;
-		std::map<uint, uint> snps = chroms[gene->_chromosome]->GetSNPs();
-		gene->DetailedReport(snps, ss.str().c_str(), os);
+		gene->DetailedReport(ss.str().c_str(), os);
 	}
 }
 

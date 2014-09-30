@@ -28,8 +28,8 @@ bool Feature::AddValue(uint snpIndex, const char *chrom, uint position, float pv
 			}
 			
 			//assert(pscores.find(position) == pscores.end());
-			pscores[position] = pvalue;
 			//pvalues.insert(std::pair<float, uint>(pvalue, position));
+			pscores.push_back(std::make_pair(pvalue, std::make_pair(position,snpIndex)));
 			if (pvalue > 0 && pvalue <= pvThreshold)
 				sigCount++;
 			return true;
@@ -38,10 +38,11 @@ bool Feature::AddValue(uint snpIndex, const char *chrom, uint position, float pv
 	return false;
 }
 
-void Feature::DetailedReport(std::map<uint, uint>& snps, const char *prefix, std::ostream& os, uint& totalSig, uint &totalNSig) {
+void Feature::DetailedReport(const char *prefix, std::ostream& os, uint& totalSig, uint &totalNSig) {
 	std::stringstream details;
 	details<<prefix<<","<<_begin<<","<<_end;
 
+/*
 	std::map<uint, float>::iterator itr = pscores.begin();
 	std::map<uint, float>::iterator end = pscores.end();
 	uint sCount = 0, nsCount = 0;
@@ -56,12 +57,23 @@ void Feature::DetailedReport(std::map<uint, uint>& snps, const char *prefix, std
 		}
 		itr++;
 	}
+*/
+	uint sCount = 0, nsCount = 0;
+	for (uint i = 0; i < pscores.size(); i++) {
+		if (pscores[i].first > 0.0 && pscores[i].first < pvThreshold) {
+			sCount++;
+			os<<details.str()<<",1,"<<pscores[i].second.second<<","<<pscores[i].second.first<<","<<pscores[i].first<<"\n";
+		} else {
+			nsCount++;
+			os<<details.str()<<",0,"<<pscores[i].second.second<<","<<pscores[i].second.first<<","<<pscores[i].first<<"\n";
+		}
+	}
 	totalSig+=sCount;
 	totalNSig+=nsCount;
 }
 
 
-std::map<uint, float> Feature::GetPValues() {
+std::vector< std::pair< float, std::pair<uint, uint> > > Feature::GetPValues() {
 	return pscores;
 }
 int Feature::CountSignificantMembers() const {

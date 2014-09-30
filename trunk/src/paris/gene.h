@@ -69,7 +69,7 @@ public:
 	 */
 	uint FeatureCount() const;
 
-	void CollectSNPs(std::set<uint>& snps);
+	void CollectSNPs(std::set< std::pair<uint,uint> >& snps);
 	/**
 	 * Returns the count for each bin associated in the local features
 	 */
@@ -95,7 +95,7 @@ public:
 
 	std::set<Feature*> GetFeatures();
 
-	void DetailedReport(std::map<uint, uint>& snps, const char *prefix, std::ostream& os);
+	void DetailedReport(const char *prefix, std::ostream& os);
 	void Summarize(std::ostream& os, bool html);
 	static bool AllowRedundantFeatures;				///< Allow users to count features that appear in multiple genes (inside same pathway) multiple times
 private:

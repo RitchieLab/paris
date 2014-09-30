@@ -253,20 +253,27 @@ void Main::LoadDataPoints(vector<ParisApp::DataPoint>& data, std::multimap<strin
 			//string p		= tokens[2];
 			string pvalue = tokens[pvalColumn];
 
-			if (rs.find("r") != string::npos || rs.find("R") != string::npos)
-					rs=rs.erase(0,2);
-			uint rsID = atoi(rs.c_str());
-			if(chr=="23")
-				chr="X";
-			else if(chr=="24")
-				chr="Y";
-			else if(chr=="25")
-				chr="MT";
-			if ((chr == "X" || chr == "Y" || atoi(chr.c_str()) > 0)) {
-//	EST-RS>0			if (rs > 0.00) {
-					data.push_back(ParisApp::DataPoint(atoi(rs.c_str()), chr.c_str(), atof(pvalue.c_str()) ));
-					snps.insert(pair<string, uint>(chr, rsID));
-//				}
+			// make sure the rs is valid
+			// atoi() will say "7:50986:T_TA" == 7 but we need to be more careful than that
+			if (rs.find("rs") == 0 || rs.find("RS") == 0)
+				rs=rs.erase(0,2);
+			std::string::iterator rsItr = rs.begin();
+			while (rsItr != rs.end() && std::isdigit(*rsItr))
+				rsItr++;
+			if (!rs.empty() && rsItr == rs.end()) {
+				uint rsID = atoi(rs.c_str());
+				if(chr=="23")
+					chr="X";
+				else if(chr=="24")
+					chr="Y";
+				else if(chr=="25" || chr=="26") // 26 is also MT --atf 2014-09-23
+					chr="MT";
+				if ((chr == "X" || chr == "Y" || chr == "MT" || atoi(chr.c_str()) > 0)) { // loci are loaded from MT, so why not user data? --atf 2014-09-23
+//	EST-RS>0		if (rs > 0.00) {
+						data.push_back(ParisApp::DataPoint(rsID, chr.c_str(), atof(pvalue.c_str()) ));
+						snps.insert(pair<string, uint>(chr, rsID));
+//					}
+				}
 			}
 		}
 	}
